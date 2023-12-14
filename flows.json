@@ -55,7 +55,7 @@
         ],
         "x": 14,
         "y": 19,
-        "w": 992,
+        "w": 972,
         "h": 82
     },
     {
@@ -283,7 +283,7 @@
         "checkall": "true",
         "repair": false,
         "outputs": 1,
-        "x": 340,
+        "x": 320,
         "y": 60,
         "wires": [
             [
@@ -298,7 +298,7 @@
         "g": "8ba1a59f0bb33d70",
         "networkIdentifier": "1",
         "serialPort": "/dev/serial/by-id/usb-0658_0200-if00",
-        "name": "Aeotec Z-Stick Gen5",
+        "name": "Z-Wave Controller",
         "encryptionKey": "",
         "encryptionKeyS2U": "",
         "encryptionKeyS2A": "",
@@ -322,7 +322,7 @@
         "FWlicenseKey": "NON-COMMERCIAL",
         "scalesTemp": "0x00",
         "scalesHumidity": "0x00",
-        "x": 140,
+        "x": 130,
         "y": 60,
         "wires": [
             [
@@ -375,7 +375,7 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 540,
+        "x": 520,
         "y": 60,
         "wires": [
             [
@@ -479,7 +479,7 @@
         "name": "",
         "server": "",
         "client": "41b64064070e53db",
-        "x": 820,
+        "x": 800,
         "y": 60,
         "wires": []
     },
