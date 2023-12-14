@@ -2,7 +2,9 @@
     "name": "z-wave",
     "description": "A Node-RED Project",
     "version": "0.0.1",
-    "dependencies": {},
+    "dependencies": {
+        "node-red-contrib-zwave-js": "9.0.3"
+    },
     "node-red": {
         "settings": {
             "flowFile": "flows.json",

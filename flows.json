@@ -1,1 +1,600 @@
-[]
+[
+    {
+        "id": "1f411be02ab63862",
+        "type": "tab",
+        "label": "Z-Wave Example",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "6585b1b266e484cc",
+        "type": "group",
+        "z": "1f411be02ab63862",
+        "name": "Z-Wave Node 2 (Binary Switch)",
+        "style": {
+            "stroke": "none",
+            "fill": "#000000",
+            "fill-opacity": "0.1",
+            "label": true,
+            "color": "#000000"
+        },
+        "nodes": [
+            "34cd01f53a8b4243",
+            "084e7ba6c3bb9740",
+            "5f879b1ccfa0655a",
+            "bceca9b69310235e",
+            "cc80f62f3f9aa4dc",
+            "cf271dd5b18b85a8",
+            "c8dda5f98c2eb041",
+            "2bfe7eb06c76ac62",
+            "75c9e08aa4f0f5ed"
+        ],
+        "x": 14,
+        "y": 119,
+        "w": 1212,
+        "h": 202
+    },
+    {
+        "id": "8ba1a59f0bb33d70",
+        "type": "group",
+        "z": "1f411be02ab63862",
+        "name": "Z-Wave Controller",
+        "style": {
+            "stroke": "none",
+            "fill": "#000000",
+            "fill-opacity": "0.1",
+            "label": true,
+            "color": "#000000"
+        },
+        "nodes": [
+            "9fcc4fd177a12088",
+            "8f73c98ea2fb6019",
+            "753144761a38235a",
+            "10987780b90b66b7"
+        ],
+        "x": 14,
+        "y": 19,
+        "w": 992,
+        "h": 82
+    },
+    {
+        "id": "37a5b38115a579e2",
+        "type": "group",
+        "z": "1f411be02ab63862",
+        "name": "Simulate updating the status on the Dashboard for z-wave node 2",
+        "style": {
+            "stroke": "none",
+            "fill": "#000000",
+            "fill-opacity": "0.1",
+            "label": true,
+            "color": "#000000"
+        },
+        "nodes": [
+            "0d01971d26e6ee6d",
+            "0bdffd47717c8047",
+            "35ddf4a4cb70e062"
+        ],
+        "x": 14,
+        "y": 479,
+        "w": 632,
+        "h": 82
+    },
+    {
+        "id": "053a0e153f4392b6",
+        "type": "group",
+        "z": "1f411be02ab63862",
+        "name": "Simulate sending commands to z-wave node 2 from the dashboard",
+        "style": {
+            "stroke": "none",
+            "fill": "#000000",
+            "fill-opacity": "0.1",
+            "label": true,
+            "color": "#000000"
+        },
+        "nodes": [
+            "c3d1996e72d271b9",
+            "9d3a5d6ac7652dd4",
+            "ddbc8b2715aaa55b"
+        ],
+        "x": 14,
+        "y": 339,
+        "w": 572,
+        "h": 122
+    },
+    {
+        "id": "d4736a641abe6778",
+        "type": "websocket-listener",
+        "path": "/ws/automation",
+        "wholemsg": "true"
+    },
+    {
+        "id": "41b64064070e53db",
+        "type": "websocket-client",
+        "path": "ws://127.0.0.1:1880/ws/automation",
+        "tls": "",
+        "wholemsg": "true",
+        "hb": "0",
+        "subprotocol": ""
+    },
+    {
+        "id": "34cd01f53a8b4243",
+        "type": "zwave-device",
+        "z": "1f411be02ab63862",
+        "g": "6585b1b266e484cc",
+        "networkIdentifier": 1,
+        "name": "Node 2",
+        "filteredNodeId": "2",
+        "multicast": false,
+        "datamode": "Send/Receive",
+        "messagesPerMS": 1,
+        "messageInterval": 250,
+        "isolated": false,
+        "outputs": 1,
+        "inputs": 1,
+        "showStatus": true,
+        "x": 880,
+        "y": 200,
+        "wires": [
+            [
+                "5f879b1ccfa0655a"
+            ]
+        ]
+    },
+    {
+        "id": "084e7ba6c3bb9740",
+        "type": "cmd-factory",
+        "z": "1f411be02ab63862",
+        "g": "6585b1b266e484cc",
+        "name": "Set Binary Switch",
+        "node": "topic",
+        "endpoint": "0",
+        "cc": "Binary Switch",
+        "method": "set",
+        "params": "[payload]",
+        "noEvent": false,
+        "forceUpdate": "undefined",
+        "api": "CCAPI",
+        "vapiMode": "setValue",
+        "vapiValue": "payload",
+        "vapiValueId": "valueId",
+        "vapiOptions": "options",
+        "x": 690,
+        "y": 240,
+        "wires": [
+            [
+                "34cd01f53a8b4243"
+            ]
+        ]
+    },
+    {
+        "id": "5f879b1ccfa0655a",
+        "type": "event-filter",
+        "z": "1f411be02ab63862",
+        "g": "6585b1b266e484cc",
+        "name": "Binary Switch",
+        "filters": [
+            {
+                "index": 0,
+                "name": "Value",
+                "valueIds": [
+                    {
+                        "commandClassName": "Binary Switch",
+                        "commandClass": 37,
+                        "endpoint": 0,
+                        "property": "currentValue",
+                        "propertyName": "currentValue"
+                    }
+                ],
+                "events": [
+                    "VALUE_UPDATED"
+                ],
+                "strict": false,
+                "id": "276296"
+            }
+        ],
+        "outputs": 1,
+        "changeDate": "2023-12-12T11:17:12.771Z",
+        "showStatus": true,
+        "x": 1100,
+        "y": 200,
+        "wires": [
+            [
+                "cc80f62f3f9aa4dc"
+            ]
+        ]
+    },
+    {
+        "id": "cc80f62f3f9aa4dc",
+        "type": "change",
+        "z": "1f411be02ab63862",
+        "g": "6585b1b266e484cc",
+        "name": "zwave/2:value",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload.object.newValue",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "zwave/2",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 920,
+        "y": 280,
+        "wires": [
+            [
+                "2bfe7eb06c76ac62"
+            ]
+        ]
+    },
+    {
+        "id": "bceca9b69310235e",
+        "type": "cmd-factory",
+        "z": "1f411be02ab63862",
+        "g": "6585b1b266e484cc",
+        "name": "Get Binary Switch",
+        "node": "''",
+        "endpoint": "0",
+        "cc": "Binary Switch",
+        "method": "get",
+        "params": "[]",
+        "noEvent": false,
+        "forceUpdate": "undefined",
+        "api": "CCAPI",
+        "vapiMode": "setValue",
+        "vapiValue": "payload",
+        "vapiValueId": "valueId",
+        "vapiOptions": "options",
+        "x": 690,
+        "y": 160,
+        "wires": [
+            [
+                "34cd01f53a8b4243"
+            ]
+        ]
+    },
+    {
+        "id": "9fcc4fd177a12088",
+        "type": "switch",
+        "z": "1f411be02ab63862",
+        "g": "8ba1a59f0bb33d70",
+        "name": "payload.event",
+        "property": "payload.event",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "ALL_NODES_READY",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 340,
+        "y": 60,
+        "wires": [
+            [
+                "753144761a38235a"
+            ]
+        ]
+    },
+    {
+        "id": "8f73c98ea2fb6019",
+        "type": "zwave-js",
+        "z": "1f411be02ab63862",
+        "g": "8ba1a59f0bb33d70",
+        "networkIdentifier": "1",
+        "serialPort": "/dev/serial/by-id/usb-0658_0200-if00",
+        "name": "Aeotec Z-Stick Gen5",
+        "encryptionKey": "",
+        "encryptionKeyS2U": "",
+        "encryptionKeyS2A": "",
+        "encryptionKeyS2AC": "",
+        "ackTimeout": "",
+        "controllerTimeout": "",
+        "sendResponseTimeout": "",
+        "sendDataCallback": "",
+        "serialAPIStarted": "",
+        "logLevelPin": "none",
+        "logLevel": "none",
+        "logFile": "",
+        "logNodeFilter": "",
+        "sendUsageStatistics": false,
+        "valueCacheDiskThrottle": "normal",
+        "customConfigPath": "",
+        "intvwUserCodes": false,
+        "softResetUSB": false,
+        "outputs": 1,
+        "disableOptimisticValueUpdate": false,
+        "FWlicenseKey": "NON-COMMERCIAL",
+        "scalesTemp": "0x00",
+        "scalesHumidity": "0x00",
+        "x": 140,
+        "y": 60,
+        "wires": [
+            [
+                "9fcc4fd177a12088"
+            ]
+        ]
+    },
+    {
+        "id": "0d01971d26e6ee6d",
+        "type": "debug",
+        "z": "1f411be02ab63862",
+        "g": "37a5b38115a579e2",
+        "name": "zwave/2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "msg",
+        "x": 540,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "753144761a38235a",
+        "type": "change",
+        "z": "1f411be02ab63862",
+        "g": "8ba1a59f0bb33d70",
+        "name": "set/zwave/ready:true",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "true",
+                "tot": "bool"
+            },
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "set/zwave/ready",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 540,
+        "y": 60,
+        "wires": [
+            [
+                "10987780b90b66b7"
+            ]
+        ]
+    },
+    {
+        "id": "c3d1996e72d271b9",
+        "type": "inject",
+        "z": "1f411be02ab63862",
+        "g": "053a0e153f4392b6",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "set/zwave/2",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 140,
+        "y": 380,
+        "wires": [
+            [
+                "ddbc8b2715aaa55b"
+            ]
+        ]
+    },
+    {
+        "id": "9d3a5d6ac7652dd4",
+        "type": "inject",
+        "z": "1f411be02ab63862",
+        "g": "053a0e153f4392b6",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "set/zwave/2",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 140,
+        "y": 420,
+        "wires": [
+            [
+                "ddbc8b2715aaa55b"
+            ]
+        ]
+    },
+    {
+        "id": "ddbc8b2715aaa55b",
+        "type": "websocket out",
+        "z": "1f411be02ab63862",
+        "g": "053a0e153f4392b6",
+        "name": "",
+        "server": "",
+        "client": "41b64064070e53db",
+        "x": 400,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "0bdffd47717c8047",
+        "type": "websocket in",
+        "z": "1f411be02ab63862",
+        "g": "37a5b38115a579e2",
+        "name": "",
+        "server": "",
+        "client": "41b64064070e53db",
+        "x": 190,
+        "y": 520,
+        "wires": [
+            [
+                "35ddf4a4cb70e062"
+            ]
+        ]
+    },
+    {
+        "id": "10987780b90b66b7",
+        "type": "websocket out",
+        "z": "1f411be02ab63862",
+        "g": "8ba1a59f0bb33d70",
+        "name": "",
+        "server": "",
+        "client": "41b64064070e53db",
+        "x": 820,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "cf271dd5b18b85a8",
+        "type": "websocket in",
+        "z": "1f411be02ab63862",
+        "g": "6585b1b266e484cc",
+        "name": "",
+        "server": "d4736a641abe6778",
+        "client": "",
+        "x": 130,
+        "y": 200,
+        "wires": [
+            [
+                "75c9e08aa4f0f5ed"
+            ]
+        ]
+    },
+    {
+        "id": "c8dda5f98c2eb041",
+        "type": "switch",
+        "z": "1f411be02ab63862",
+        "g": "6585b1b266e484cc",
+        "name": "topic",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "set/zwave/ready",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "set/zwave/2",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 510,
+        "y": 200,
+        "wires": [
+            [
+                "bceca9b69310235e"
+            ],
+            [
+                "084e7ba6c3bb9740"
+            ]
+        ]
+    },
+    {
+        "id": "2bfe7eb06c76ac62",
+        "type": "websocket out",
+        "z": "1f411be02ab63862",
+        "g": "6585b1b266e484cc",
+        "name": "",
+        "server": "d4736a641abe6778",
+        "client": "",
+        "x": 1110,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "75c9e08aa4f0f5ed",
+        "type": "change",
+        "z": "1f411be02ab63862",
+        "g": "6585b1b266e484cc",
+        "name": "",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "_session",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 340,
+        "y": 200,
+        "wires": [
+            [
+                "c8dda5f98c2eb041"
+            ]
+        ]
+    },
+    {
+        "id": "35ddf4a4cb70e062",
+        "type": "switch",
+        "z": "1f411be02ab63862",
+        "g": "37a5b38115a579e2",
+        "name": "topic",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "zwave/2",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 410,
+        "y": 520,
+        "wires": [
+            [
+                "0d01971d26e6ee6d"
+            ]
+        ]
+    }
+]
