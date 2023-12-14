@@ -55,7 +55,7 @@
         ],
         "x": 14,
         "y": 19,
-        "w": 972,
+        "w": 1012,
         "h": 82
     },
     {
@@ -283,7 +283,7 @@
         "checkall": "true",
         "repair": false,
         "outputs": 1,
-        "x": 320,
+        "x": 360,
         "y": 60,
         "wires": [
             [
@@ -297,8 +297,8 @@
         "z": "1f411be02ab63862",
         "g": "8ba1a59f0bb33d70",
         "networkIdentifier": "1",
-        "serialPort": "/dev/serial/by-id/usb-0658_0200-if00",
-        "name": "Z-Wave Controller",
+        "serialPort": "/dev/serial/by-id/usb-Silicon_Labs_CP2102N_USB_to_UART_Bridge_Controller_3a2938a76455ed11adc495131d62bc44-if00-port0",
+        "name": "Silicon Labs 700 Series",
         "encryptionKey": "",
         "encryptionKeyS2U": "",
         "encryptionKeyS2A": "",
@@ -322,7 +322,7 @@
         "FWlicenseKey": "NON-COMMERCIAL",
         "scalesTemp": "0x00",
         "scalesHumidity": "0x00",
-        "x": 130,
+        "x": 150,
         "y": 60,
         "wires": [
             [
@@ -375,7 +375,7 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 520,
+        "x": 560,
         "y": 60,
         "wires": [
             [
@@ -479,7 +479,7 @@
         "name": "",
         "server": "",
         "client": "41b64064070e53db",
-        "x": 800,
+        "x": 840,
         "y": 60,
         "wires": []
     },
