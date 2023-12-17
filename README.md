@@ -55,8 +55,8 @@ version of _Node_ supported by your version of _Node-RED_ should work.
 
 ## Background and Terminology
 
-Z-Wave is mesh network protocol designed to support building automation and what
-has come to be called the "Internet of Things" (IoT). The [Z-Wave
+Z-Wave is a mesh network protocol designed to support building automation and
+what has come to be called the "Internet of Things" (IoT). The [Z-Wave
 Alliance](https://z-wavealliance.org/) is a consortium of stakeholders which
 defines the Z-Wave hardware and software specifications. Those specifictions
 support a hardware ecosystem of "smart" lights, thermostats, sensors etc. which
@@ -65,10 +65,10 @@ _Node-RED_, _Home Assistant_, _OpenHAB_ and so on.
 
 Unfortuntely, both _Node-RED_ and the Z-Wave protocol use the term "node," but
 to mean different things. A _Node-RED_ node is a small, self-contained software
-component that can be added to _Node-RED_ flow. A Z-Wave node is an individual
+component that can be added to _Node-RED_ flows. A Z-Wave node is an individual
 piece of "smart" gear. Where the meaning of "node" is not obvious from context,
 this document will qualify it; the phrase "_Node-RED_ node" refers to
-_Node-RED_'s software component while "Z-Wave node" refers to a hardware device
+_Node-RED_'s software components while "Z-Wave node" refers to a hardware device
 that is part of a Z-Wave mesh network.
 
 The Z-Wave specification includes a taxonomy of Z-Wave node types. A Z-Wave
@@ -443,3 +443,44 @@ state of the physical binary switch whose Z-Wave node id is 2.
   _debug_ node where an actual HTML5-based dashboard would update the state of
   some UI component such as a graphical toggle switch corresponding to the
   status of Z-Wave node 2
+
+## Paths Forward
+
+The next obvious step beyond this tutorial flow would be to create a real UI
+beyond `inject` and `debug` nodes. This could be done with _Node-RED_'s native
+dashboard package or using a separate HTML5-based web application. It could also
+be done by using a protocol like MQTT to integrate with platforms like _OpenHAB_
+or _Home Assistant_ and even more loosely coupled fashion. Whatever approach to
+a UI is used, it is a good idea to "go with the flow" of how Z-Wave is intended
+to function.
+
+When configured as intended, using Z-Wave's full feature set, the devices in a
+Z-Wave network can communicate directly with one another when there is no TCP/IP
+connection or even if the Z-Wave controller hardware fails, making it far more
+efficient and robust than relying on protocols like Wi-Fi for automation or,
+worse by far, cloud-based automation services. In other words, when used as
+intended, the Z-Wave protocol relies on controller nodes primarily for two
+purposes:
+
+* Configuring the Z-Wave mesh network
+
+* Bridging the Z-Wave network to other systems (like _Node-RED_)
+
+The configuration performed using the controller includes both adding and
+removing device nodes, but also connecting devices nodes directly together so
+that, for example, the CC 37 command messages emitted by a given wall switch are
+directed to a particular CC 37 power outlet. As long as both devices are
+connected to AC power and can communicate using the RF signals defined by the
+Z-Wave specifications, occupants can control the outlets using the wall switches
+even if other nodes in the network, including any automation servers or Z-Wave
+controllers, fail. This is an area of functionality often overlooked when
+integrating Z-Wave devices into automation systems running on platforms like
+_Node-RED_ and the like. If all your automations are similar to the one
+implemented by this flow (i.e. triggering a CC 37 status query when _Node-RED_
+detects that the controller has emitted a `ALL_NODES_READY` message) then
+_Node-RED_ and the hardware on which it relies becomes a single point of
+failure. Z-Wave is capable of minimizing such single points of failure to much
+larger degree than is typically implemented by home automation enthusiasts. It
+is also such features that have caused the industry to move away from protocols
+since more robust home automation is actually contrary to the economic interests
+of the companies developing the home automation marketplace.
