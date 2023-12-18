@@ -1,7 +1,7 @@
 <template>
-  <HelloWorld />
+  <ZWave />
 </template>
 
 <script setup>
-  import HelloWorld from '@/components/HelloWorld.vue'
+  import ZWave from '@/components/ZWave.vue'
 </script>

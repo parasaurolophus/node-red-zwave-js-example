@@ -223,7 +223,7 @@
                 "t": "set",
                 "p": "topic",
                 "pt": "msg",
-                "to": "zwave/2",
+                "to": "zwave/2/37",
                 "tot": "str"
             }
         ],
@@ -516,7 +516,7 @@
             },
             {
                 "t": "eq",
-                "v": "set/zwave/2",
+                "v": "set/zwave/2/37",
                 "vt": "str"
             }
         ],
