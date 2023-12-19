@@ -26,8 +26,8 @@ to control a Z-Wave-enabled switch using a USB-based Z-Wave controller.
 This _README.md_ is not a Z-Wave tutorial. It assumes familiarity with
 _Node-RED_ and Z-Wave terminology and concepts. It assumes you have a working
 Z-Wave controller that appears to your _Node-RED_ server machine as a serial
-device along with at least once Z-Wave enabled binary switch (command class 37)
-device and that you know what that device's Z-Wave node id is.
+device along with at least one Z-Wave enabled binary switch (command class 37)
+device and that you know that device's Z-Wave node id.
 
 ## Dependencies
 
