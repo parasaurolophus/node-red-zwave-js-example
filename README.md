@@ -186,7 +186,6 @@ graph TB
               commands[CMD Factory]
           end
 
-          note[conceptually, dashboard\ncan be hosted anywhere;\nto make this a self-contained\nexample, dashboard is hosted\nin Node-RED using its ability\nto function as a web server]
           dashboard
 
       end
@@ -201,12 +200,13 @@ graph TB
   dongle <-- z-wave --> switch
   browser <-- websocket --> flows
   browser <-- HTTP --> dashboard
-
-  note .- dashboard
-
-  classDef dashed stroke-dasharray: 5 5
-  class note dashed
 ```
+
+Note that _Node-RED_ is used as the web server for the dashboard in order
+to make this tutorial project as self-contained as possible. The dashboard
+web application has no server side code nor any dependency on _Node-RED_
+other than as a web socket client. It could run in any web server with
+network access to the _Node-RED_ server running this project's flow.
 
 ### WebSocket Based Event Driven Design
 
