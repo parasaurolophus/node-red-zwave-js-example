@@ -39,12 +39,6 @@ function websocketPublish(msg) {
         const text = JSON.stringify(msg, undefined, 1)
 
         console.log('websocket closed when attempting to send:\n' + text)
-        alerts.value.push({
-            show: true,
-            title: 'websocket closed',
-            type: 'warning',
-            text: text
-        })
         return
 
     }
@@ -148,12 +142,6 @@ function connectWS() {
         const text = JSON.stringify(event, undefined, 1)
 
         console.log(text)
-        alerts.value.push({
-            show: true,
-            title: 'ws.onerror',
-            type: 'error',
-            text: text
-        })
 
     }
 
@@ -164,7 +152,7 @@ function connectWS() {
         // string in event.data
         const msg = JSON.parse(event.data)
 
-        if (msg.topic == 'zwave/2') {
+        if (msg.topic == 'zwave/2/37') {
 
             node2.value = msg.payload
             return
