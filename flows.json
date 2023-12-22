@@ -209,7 +209,7 @@
         "z": "1f411be02ab63862",
         "g": "800b06c9c0e3dff7",
         "name": "z-wave event",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": false,
         "tostatus": true,
@@ -735,9 +735,9 @@
         "type": "comment",
         "z": "1f411be02ab63862",
         "g": "800b06c9c0e3dff7",
-        "name": "currently only supports binary switch (cc 37) devices' \"currentValue\" and \"targetValue\" properties",
+        "name": "reports only' \"currentValue\" events and supports only \"targetValue\" commands",
         "info": "",
-        "x": 390,
+        "x": 330,
         "y": 280,
         "wires": []
     },
@@ -912,7 +912,7 @@
                 "t": "set",
                 "p": "payload",
                 "pt": "msg",
-                "to": "(\t   $topic := topic.$split('/');\t   {\t       \"node\": $number($topic[3]),\t       \"mode\":\"ValueAPI\",\t       \"method\": \"setValue\",\t       \"params\": [\t           {\t               \"commandClass\": $number($topic[5]),\t               \"commandClassName\": \"Binary Switch\",\t               \"endpoint\": $number($topic[4]),\t               \"property\": \"targetValue\",\t               \"propertyName\": \"targetValue\"\t           },\t           payload,\t           {}\t        ]\t   }\t)",
+                "to": "(\t   $topic := topic.$split('/');\t   {\t       \"node\": $number($topic[3]),\t       \"mode\":\"ValueAPI\",\t       \"method\": \"setValue\",\t       \"params\": [\t           {\t               \"commandClass\": $number($topic[5]),\t               \"endpoint\": $number($topic[4]),\t               \"property\": \"targetValue\"\t           },\t           payload,\t           {}\t        ]\t   }\t)",
                 "tot": "jsonata"
             },
             {
