@@ -22,11 +22,8 @@
         "nodes": [
             "807b59493c63c6b5",
             "8f73c98ea2fb6019",
-            "caaea4c77bcd4af3",
             "13366aaaed6d6a0e",
-            "ea70d6e98faeab69",
             "c464961f4d24a38b",
-            "c16d617ae0847101",
             "712857b73501e96a",
             "1a0cab3de23ecf0c",
             "4bc3610ddc285e04",
@@ -35,10 +32,8 @@
             "a57bc6b06e714885",
             "f25df70eb9464d09",
             "10129746c3677820",
-            "1c9224fc000f3001",
             "fe82b1b65fd7042a",
             "76049d71e0f18037",
-            "d8e913e34466bf21",
             "774a45fd82b39e49",
             "6235c2a237d187b4",
             "9ee9d0011c3da8fe",
@@ -50,12 +45,17 @@
             "d1cc926a0732e498",
             "5fcf03941d248d26",
             "ba4c6018b004ebe4",
-            "86b259c55abdad3c"
+            "86b259c55abdad3c",
+            "052dca420f30f468",
+            "06f3bbbc1d516cf1",
+            "cbce903350b96584",
+            "6fcf2b7a2b9cbf10",
+            "6c7e25e13cc8dc0b"
         ],
         "x": 34,
         "y": 239,
-        "w": 1332,
-        "h": 542
+        "w": 1372,
+        "h": 522
     },
     {
         "id": "c86dc82a6849388d",
@@ -81,7 +81,7 @@
         ],
         "x": 34,
         "y": 19,
-        "w": 792,
+        "w": 812,
         "h": 202
     },
     {
@@ -132,7 +132,7 @@
         "scalesTemp": "0x01",
         "scalesHumidity": "0x00",
         "x": 330,
-        "y": 520,
+        "y": 500,
         "wires": [
             [
                 "807b59493c63c6b5"
@@ -172,16 +172,13 @@
                 "t": "eq",
                 "v": "VALUE_UPDATED",
                 "vt": "str"
-            },
-            {
-                "t": "else"
             }
         ],
         "checkall": "false",
         "repair": false,
-        "outputs": 6,
+        "outputs": 5,
         "x": 490,
-        "y": 520,
+        "y": 500,
         "wires": [
             [
                 "712857b73501e96a"
@@ -193,33 +190,12 @@
                 "1a0cab3de23ecf0c"
             ],
             [
-                "ea70d6e98faeab69"
+                "06f3bbbc1d516cf1"
             ],
             [
                 "13366aaaed6d6a0e"
-            ],
-            [
-                "caaea4c77bcd4af3"
             ]
         ]
-    },
-    {
-        "id": "caaea4c77bcd4af3",
-        "type": "debug",
-        "z": "1f411be02ab63862",
-        "g": "800b06c9c0e3dff7",
-        "name": "z-wave event",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": true,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "counter",
-        "x": 690,
-        "y": 680,
-        "wires": []
     },
     {
         "id": "c464961f4d24a38b",
@@ -228,14 +204,13 @@
         "g": "800b06c9c0e3dff7",
         "name": "z-wave controller",
         "links": [
+            "6235c2a237d187b4",
             "76049d71e0f18037",
-            "a57bc6b06e714885",
             "8ba1b10ce727a1f3",
-            "e2081b0fe7d59fac",
-            "6235c2a237d187b4"
+            "a57bc6b06e714885"
         ],
         "x": 140,
-        "y": 520,
+        "y": 500,
         "wires": [
             [
                 "8f73c98ea2fb6019"
@@ -256,10 +231,10 @@
         "stream": false,
         "addname": "",
         "x": 790,
-        "y": 440,
+        "y": 420,
         "wires": [
             [
-                "1c9224fc000f3001"
+                "052dca420f30f468"
             ]
         ]
     },
@@ -270,6 +245,13 @@
         "g": "800b06c9c0e3dff7",
         "name": "object",
         "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "payload.networkId",
+                "tot": "msg"
+            },
             {
                 "t": "move",
                 "p": "payload.object",
@@ -284,36 +266,10 @@
         "to": "",
         "reg": false,
         "x": 670,
-        "y": 440,
+        "y": 420,
         "wires": [
             [
                 "10129746c3677820"
-            ]
-        ]
-    },
-    {
-        "id": "1c9224fc000f3001",
-        "type": "switch",
-        "z": "1f411be02ab63862",
-        "g": "800b06c9c0e3dff7",
-        "name": "nodeId != 1",
-        "property": "payload.nodeId",
-        "propertyType": "msg",
-        "rules": [
-            {
-                "t": "neq",
-                "v": "1",
-                "vt": "num"
-            }
-        ],
-        "checkall": "true",
-        "repair": false,
-        "outputs": 1,
-        "x": 930,
-        "y": 440,
-        "wires": [
-            [
-                "fe82b1b65fd7042a"
             ]
         ]
     },
@@ -338,7 +294,7 @@
         "to": "",
         "reg": false,
         "x": 1100,
-        "y": 440,
+        "y": 420,
         "wires": [
             [
                 "76049d71e0f18037"
@@ -356,7 +312,7 @@
             "c464961f4d24a38b"
         ],
         "x": 1270,
-        "y": 440,
+        "y": 420,
         "wires": [],
         "l": true
     },
@@ -434,52 +390,10 @@
         "repair": false,
         "outputs": 1,
         "x": 690,
-        "y": 620,
+        "y": 660,
         "wires": [
             [
-                "c16d617ae0847101"
-            ]
-        ]
-    },
-    {
-        "id": "c16d617ae0847101",
-        "type": "change",
-        "z": "1f411be02ab63862",
-        "g": "800b06c9c0e3dff7",
-        "name": "current value",
-        "rules": [
-            {
-                "t": "set",
-                "p": "topic",
-                "pt": "msg",
-                "to": "'zwave/' & payload.networkId & '/' & payload.node & '/' & payload.object.endpoint & '/' & payload.object.commandClass",
-                "tot": "jsonata"
-            },
-            {
-                "t": "move",
-                "p": "payload.object.newValue",
-                "pt": "msg",
-                "to": "payload",
-                "tot": "msg"
-            },
-            {
-                "t": "set",
-                "p": "retain",
-                "pt": "msg",
-                "to": "true",
-                "tot": "bool"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 850,
-        "y": 620,
-        "wires": [
-            [
-                "9ee9d0011c3da8fe"
+                "cbce903350b96584"
             ]
         ]
     },
@@ -491,8 +405,8 @@
         "name": "",
         "server": "d4736a641abe6778",
         "client": "",
-        "x": 710,
-        "y": 140,
+        "x": 730,
+        "y": 120,
         "wires": []
     },
     {
@@ -565,48 +479,6 @@
         "l": true
     },
     {
-        "id": "ea70d6e98faeab69",
-        "type": "change",
-        "z": "1f411be02ab63862",
-        "g": "800b06c9c0e3dff7",
-        "name": "current value",
-        "rules": [
-            {
-                "t": "set",
-                "p": "topic",
-                "pt": "msg",
-                "to": "'zwave/' & payload.networkId & '/' & payload.node & '/' & payload.object.endpoint & '/' & payload.object.commandClass",
-                "tot": "jsonata"
-            },
-            {
-                "t": "move",
-                "p": "payload.object.currentValue",
-                "pt": "msg",
-                "to": "payload",
-                "tot": "msg"
-            },
-            {
-                "t": "set",
-                "p": "retain",
-                "pt": "msg",
-                "to": "true",
-                "tot": "bool"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 690,
-        "y": 560,
-        "wires": [
-            [
-                "f5304bc4374c63ec"
-            ]
-        ]
-    },
-    {
         "id": "c554502adc5b7656",
         "type": "websocket in",
         "z": "1f411be02ab63862",
@@ -615,7 +487,7 @@
         "server": "d4736a641abe6778",
         "client": "",
         "x": 150,
-        "y": 100,
+        "y": 60,
         "wires": [
             [
                 "5f14ec4cee3294ac"
@@ -643,7 +515,7 @@
         "to": "",
         "reg": false,
         "x": 670,
-        "y": 380,
+        "y": 340,
         "wires": [
             [
                 "774a45fd82b39e49"
@@ -660,7 +532,7 @@
             "8f73c98ea2fb6019"
         ],
         "x": 160,
-        "y": 740,
+        "y": 720,
         "wires": [
             [
                 "5fcf03941d248d26"
@@ -702,7 +574,7 @@
         "to": "",
         "reg": false,
         "x": 390,
-        "y": 740,
+        "y": 720,
         "wires": [
             [
                 "ba4c6018b004ebe4"
@@ -715,7 +587,7 @@
         "z": "1f411be02ab63862",
         "g": "c86dc82a6849388d",
         "name": "retain",
-        "func": "const retained = flow.get('retained') || {}\n\ntry {\n\n    if (msg.retain) {\n\n        retained[msg.topic] = RED.util.cloneMessage(msg)\n        flow.set('retained', retained)\n        const message = RED.util.cloneMessage(msg)\n        delete message._session\n        message.retain = false\n        return message\n\n    }\n\n    return msg\n\n} finally {\n\n    node.status({\n        fill: 'blue',\n        shape: 'dot',\n        text: Object.keys(retained).length\n    })\n\n}",
+        "func": "const retained = flow.get('retained') || {}\n\ntry {\n\n    if (msg.retain === true) {\n\n        if (msg.topic === undefined) {\n\n            node.error(\"topic required when retain is true\", msg);\n            return msg\n\n        }\n\n        if ((msg.payload !== undefined) && (msg.payload !== '')) {\n\n            retained[msg.topic] = RED.util.cloneMessage(msg)\n\n        } else {\n\n            delete retained[msg.topic]\n\n        }\n\n        flow.set('retained', retained)\n        const message = RED.util.cloneMessage(msg)\n        delete message._session\n        message.retain = false\n        return message\n\n    }\n\n    return msg\n\n} finally {\n\n    node.status({\n        fill: 'blue',\n        shape: 'dot',\n        text: Object.keys(retained).length\n    })\n\n}",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -723,23 +595,12 @@
         "finalize": "",
         "libs": [],
         "x": 530,
-        "y": 100,
+        "y": 60,
         "wires": [
             [
                 "96c70db260437753"
             ]
         ]
-    },
-    {
-        "id": "d8e913e34466bf21",
-        "type": "comment",
-        "z": "1f411be02ab63862",
-        "g": "800b06c9c0e3dff7",
-        "name": "reports only' \"currentValue\" events and supports only \"targetValue\" commands",
-        "info": "",
-        "x": 330,
-        "y": 280,
-        "wires": []
     },
     {
         "id": "b857726cf2a5c767",
@@ -826,7 +687,7 @@
         "to": "",
         "reg": false,
         "x": 800,
-        "y": 380,
+        "y": 340,
         "wires": [
             [
                 "6235c2a237d187b4"
@@ -844,7 +705,7 @@
             "c464961f4d24a38b"
         ],
         "x": 940,
-        "y": 380,
+        "y": 340,
         "wires": [],
         "l": true
     },
@@ -867,7 +728,7 @@
         "allowrate": false,
         "outputs": 1,
         "x": 590,
-        "y": 740,
+        "y": 720,
         "wires": [
             [
                 "86b259c55abdad3c"
@@ -894,7 +755,7 @@
         "repair": false,
         "outputs": 1,
         "x": 500,
-        "y": 320,
+        "y": 280,
         "wires": [
             [
                 "e561194217443d28"
@@ -927,7 +788,7 @@
         "to": "",
         "reg": false,
         "x": 700,
-        "y": 320,
+        "y": 280,
         "wires": [
             [
                 "8ba1b10ce727a1f3"
@@ -942,8 +803,8 @@
         "name": "",
         "server": "",
         "client": "29dd7a1892ce9251",
-        "x": 1090,
-        "y": 620,
+        "x": 1230,
+        "y": 660,
         "wires": []
     },
     {
@@ -955,7 +816,7 @@
         "server": "",
         "client": "29dd7a1892ce9251",
         "x": 830,
-        "y": 740,
+        "y": 720,
         "wires": []
     },
     {
@@ -966,8 +827,8 @@
         "name": "",
         "server": "",
         "client": "29dd7a1892ce9251",
-        "x": 930,
-        "y": 560,
+        "x": 1090,
+        "y": 580,
         "wires": []
     },
     {
@@ -989,7 +850,7 @@
         "to": "",
         "reg": false,
         "x": 360,
-        "y": 100,
+        "y": 60,
         "wires": [
             [
                 "6b25f4c463835160"
@@ -1007,7 +868,7 @@
             "c464961f4d24a38b"
         ],
         "x": 840,
-        "y": 320,
+        "y": 280,
         "wires": [],
         "l": true
     },
@@ -1020,7 +881,7 @@
         "server": "",
         "client": "29dd7a1892ce9251",
         "x": 210,
-        "y": 320,
+        "y": 280,
         "wires": [
             [
                 "da5269e74a9b54dd"
@@ -1035,7 +896,112 @@
         "name": "websocket-based communications server with semantics modeled on mqtt 3.x",
         "info": "",
         "x": 330,
-        "y": 60,
+        "y": 120,
         "wires": []
+    },
+    {
+        "id": "052dca420f30f468",
+        "type": "function",
+        "z": "1f411be02ab63862",
+        "g": "800b06c9c0e3dff7",
+        "name": "cacheDevice",
+        "func": "const message = RED.util.cloneMessage(msg)\nconst networkId = Number.parseInt(message.topic)\nconst networks = flow.get('zwaveNetworks') || {}\nconst devices = networks[networkId] || {}\n\ndevices[message.payload.nodeId] = message.payload\nnetworks[networkId] = devices\nflow.set('zwaveNetworks', networks)\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 930,
+        "y": 420,
+        "wires": [
+            [
+                "fe82b1b65fd7042a"
+            ]
+        ]
+    },
+    {
+        "id": "06f3bbbc1d516cf1",
+        "type": "function",
+        "z": "1f411be02ab63862",
+        "g": "800b06c9c0e3dff7",
+        "name": "get value response",
+        "func": "const networks = flow.get('zwaveNetworks') || {}\nconst devices = networks[msg.payload.networkId] || {}\nconst device = devices[msg.payload.node] || {}\nconst endpoints = device.endpoints || {}\nconst values = endpoints.values || {}\n\nvalues[msg.payload.object.commandClass] = msg.payload.object.currentValue\nendpoints[msg.payload.object.endpoint] = values\ndevice.endpoints = endpoints\ndevices[msg.payload.node] = device\nnetworks[msg.payload.networkId] = devices\nflow.set(\"zwaveNetworks\", networks)\nreturn {\n    topic: 'zwave/networks',\n    payload: networks,\n    retain: true\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 580,
+        "wires": [
+            [
+                "6fcf2b7a2b9cbf10"
+            ]
+        ]
+    },
+    {
+        "id": "cbce903350b96584",
+        "type": "function",
+        "z": "1f411be02ab63862",
+        "g": "800b06c9c0e3dff7",
+        "name": "value updated",
+        "func": "const networks = flow.get('zwaveNetworks') || {}\nconst devices = networks[msg.payload.networkId] || {}\nconst device = devices[msg.payload.node] || {}\nconst endpoints = device.endpoints || {}\nconst values = endpoints.values || {}\n\nvalues[msg.payload.object.commandClass] = msg.payload.object.newValue\nendpoints[msg.payload.object.endpoint] = values\ndevice.endpoints = endpoints\ndevices[msg.payload.node] = device\nnetworks[msg.payload.networkId] = devices\nflow.set('zwaveNetworks', networks)\nreturn {\n    topic: 'zwave/networks',\n    payload: networks,\n    retain: true\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 860,
+        "y": 660,
+        "wires": [
+            [
+                "6c7e25e13cc8dc0b"
+            ]
+        ]
+    },
+    {
+        "id": "6fcf2b7a2b9cbf10",
+        "type": "rbe",
+        "z": "1f411be02ab63862",
+        "g": "800b06c9c0e3dff7",
+        "name": "",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "septopics": true,
+        "property": "payload",
+        "topi": "topic",
+        "x": 870,
+        "y": 580,
+        "wires": [
+            [
+                "f5304bc4374c63ec"
+            ]
+        ]
+    },
+    {
+        "id": "6c7e25e13cc8dc0b",
+        "type": "rbe",
+        "z": "1f411be02ab63862",
+        "g": "800b06c9c0e3dff7",
+        "name": "",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "septopics": true,
+        "property": "payload",
+        "topi": "topic",
+        "x": 1010,
+        "y": 660,
+        "wires": [
+            [
+                "9ee9d0011c3da8fe"
+            ]
+        ]
     }
 ]

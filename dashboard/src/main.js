@@ -54,11 +54,8 @@ app.provide('websocketPublish', websocketPublish)
 // back end using a websocket
 //////////////////////////////////////////////////////////////////////////////
 
-const node2 = ref(false)
-app.provide('node2', node2)
-
-const zwaveControllerStatus = ref('')
-app.provide('zwaveControllerStatus', zwaveControllerStatus)
+const zwaveNetworks = ref({})
+app.provide('zwaveNetworks', zwaveNetworks)
 
 ///////////////////////////////////////////////////////////////////////////////
 // connect to the back end using a websocket
@@ -155,22 +152,12 @@ function connectWS() {
         // string in event.data
         const msg = JSON.parse(event.data)
 
-        if (msg.topic == 'zwave/1/2/0/37') {
+        if (msg.topic == 'zwave/networks') {
 
-            node2.value = msg.payload
+            zwaveNetworks.value = msg.payload
             return
-
+            
         }
-
-        if (msg.topic == 'zwave/controller/status') {
-
-            zwaveControllerStatus.value = msg.payload
-            return
-
-        }
-
-        console.log('unsupported message from back end: ' + JSON.stringify(msg, null, 2))
-
     }
 }
 

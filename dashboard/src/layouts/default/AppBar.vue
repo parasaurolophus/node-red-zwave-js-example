@@ -2,7 +2,7 @@
   <v-app-bar flat>
     <v-app-bar-title>
       <v-icon icon="mdi-home" />
-      Z-Wave Examples
+      Z-Wave Example
     </v-app-bar-title>
   </v-app-bar>
 </template>

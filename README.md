@@ -2,7 +2,7 @@
 
 # Z-Wave in Node-RED Using _node-red-contrib-zwave-js_
 
-[Note: all links on this page were working as of December 15, 2023.]
+> _All links on this page were working as of December 15, 2023._
 
 ![flow](flow-screenshot.png)
 
@@ -12,22 +12,67 @@ Demonstrate using
 [node-red-contrib-zwave-js](<https://flows.nodered.org/node/node-red-contrib-zwave-js>)
 to control a Z-Wave-enabled switch using a USB-based Z-Wave controller.
 
-* Connect to the controller using a _Zwave Controller_ node
+* Connect to Z-Wave enabled hardware using a _ZWave Controller_ node
 
-* Send commands to control the state of a binary switch (command class 37) using
-  a combination of _CMD Factory_ and _ZWave Device_ nodes
+* Event-driven programming techniques using a WebSocket to communicate
+  asynchronously between the front and back ends
 
-* Receive asynchronous events when the state of the binary switch changes using
-  a combination of _ZWave Device_ and _Event Filter_ nodes
+* Data-driven front end using a component framework,
+  [Vuetify](https://vuetifyjs.com)
 
-* Integrate with a HTML5-based dashboard using a websocket for communication
-  with _Node-RED_ and [Vuetify](https://vuetifyjs.com) web UI components
+A key feature of this flow is that one can add or remove devices in the Z-Wave
+network without having to modify the front or back end implementation, so long
+as the devices communicate using supported Z-Wave command classes (currently
+only CC 37 for this tutorial).
 
-This _README.md_ is not a Z-Wave tutorial. It assumes familiarity with
-_Node-RED_ and Z-Wave terminology and concepts. It assumes you have a working
-Z-Wave controller that appears to your _Node-RED_ server machine as a serial
-device along with at least one Z-Wave enabled binary switch (command class 37)
-device and that you know that device's Z-Wave node id.
+This flow deliberately departs from many of the recommendations in the
+documentation for _node-red-contrib-zwave-js_. It uses neither
+_CMD&nbsp;Factory_ nor _Event&nbsp;Filter_ nodes. In fact, the only type of node
+from _node-red-cotrib-zwave-js_ used is _ZWave Controller_. The decision only to
+use the _ZWave&nbsp;Controller_ type was made consciously so as to facilitate
+creating and managing a Vuetify-based dashboard in a data-driven fashion. There
+are no hard-coded Z-Wave node id's in the front or back end. Specific Z-Wave
+property types and command classes are referenced only so as to determine
+whether and how to represent a given Z-Wave device in the data model and render
+it in the front end. "Going with the flow" (pun intended) of how
+_node-red-contrib-zwave-js_ is designed would have resulted in a flow that was
+easier to create than this one, but which would have been very fragile by
+comparison when devices are added or removed from the Z-Wave network. The
+approach demonstrated here automatically adapts to devices being added or
+removed using the Z-Wave controller user interface, without requiring
+modification to the front and back end data model and logic for each Z-Wave
+binary switch device added or removed. In other words, the design of this flow
+trades a less intuitive up-front design in exchange for greater flexibility and
+maintainability over time.
+
+Specifically, the implementation of this tutorial flow and associated front-end
+logic support devices that provide Z-Wave's binary switch (command class
+37) protocol using _currentValue_ and _targetValue_ properties in the messages
+they exchange with _Node-RED_ using the _ZWave Controller_ type. This is done by
+exploiting the similarity between the features and data models used by Z-Wave CC
+37 devices and Vuetify's _v-switch_ UI components. It would be reasonably
+straightforward to extend this flow's approach to monitor and control additional
+Z-Wave device types using corresponding types of Vuetify components.
+
+> Vuetify is used in this flow to demonstrate the relationship between the data
+> model implemented in _Node-RED_ and components of such a framework. The data
+> model for a binary switch is so simple that it could have just as easily be
+> represented using native HTML5 entities such as check boxes rather than
+> _v-switch_ components. The expectation is that gear with more complex
+> behavior, e.g. a thermostat that appears as a composite Z-Wave node with
+> multiple command classes of various underlying data types, would be
+> implemented by application-specific, custom Vuetify components the
+> implementation of which is beyond the scope of this tutorial but a natural
+> extension from it.
+
+## File and Directory Structure
+
+This repository's file structure is that of a standard _Node-RED_ "project" such
+that it can be installed using the _Node-RED_ UI for creating projects from Git
+repositories. In addition, it contains a subdirectory named _dashboard_ that
+contains a Vuetify project. You can use _Node-RED_'s normal UI for loading
+projects from a GitHub repository. The process for also building and hosting the
+Vuetify based front end web application is described [below](#installation).
 
 ## Dependencies
 
@@ -41,30 +86,31 @@ The hardware with which this flow was tested:
 | Aeotec Z-Stick 7             | <https://aeotec.com/products/aeotec-z-stick-7/>                        |
 | GE/Enbrighten Outdoor Switch | <https://enbrightenme.com/enbrighten-z-wave-plug-outdoor-smart-switch> |
 
-Any computer suppoted by Node-RED should work. Any Z-Wave controller compatible
-with _node-red-contrib-zwave-js_ should work, as should any Z-Wave device that
-supports the Z-Wave binary switch (command class 37) protocol.
-
 ### Software
 
-(Note that at the time of writing in December 2023 there is some incompatibility
-among the latest versions of _Raspberry Pi OS_, _Node_, and _Node-RED_ such that
-once _Node-RED_ opens a serial port the _Node-RED_ process must be restarted,
-e.g. using `sudo systemctl restart nodered.service`, every time changes to the
-flow are saved or else the node using the serial port will receive a run time
-error indicating that the port is in use, even though it is _Node-RED_ which has
-it locked. This bug occurs not only with the _node-red-contrib-zwave-js_ package
-but also with native _serial in_ and _serial out_ nodes.)
+> Note that at the time of writing in December 2023 there is some
+> incompatibility among the latest versions of _Raspberry Pi OS_, _Node_, and
+> _Node-RED_ such that once _Node-RED_ opens a serial port the _Node-RED_
+> process must be restarted, e.g. using
+> `sudo&nbsp;systemctl&nbsp;restart&nbsp;nodered.service`, every time changes to
+> the flow are saved or else the node using the serial port will receive a run
+> time error indicating that the port is in use, even though it is the
+> _Node-RED_ process which holds the lock. This bug occurs not only with the
+> _node-red-contrib-zwave-js_ package but also with native _serial in_ and
+> _serial out_ nodes so it is very likely a regression introduced by later
+> versions of _Raspberry Pi OS_ or _Node_ than those which are officially
+> supported by _Node-RED_.
 
 The versions of software with which this flow was tested:
 
-| Component                         | URL                                                        |
+| Product                           | URL                                                        |
 |-----------------------------------|------------------------------------------------------------|
 | Raspberry Pi OS (bookworm)        | <https://www.raspberrypi.com/software/>                    |
 | Node (20.10.0)                    | <https://github.com/nodesource/distributions>              |
 | Node-RED (3.1.3)                  | <https://nodered.org>                                      |
 | node-red-contrib-zwave-js (9.0.3) | <https://flows.nodered.org/node/node-red-contrib-zwave-js> |
 | Vuetify (3.0.0)                   | <https://vuetifyjs.com>                                    |
+| Chromium (120.0.6099.102)         | <https://www.chromium.org/chromium-projects/>              |
 
 ## Installation
 
@@ -76,13 +122,23 @@ The versions of software with which this flow was tested:
        enabled: true,
    ```
 
-2. Create a new project by cloning this repository using the _Node-RED_ user
+   Remember to restart the _Node-RED_ process each time you modify _settings.js_
+
+2. Install _node-red-contrib-zwave-js_ either throug the palette manager UI in
+   _Node-RED_ or at the command line
+
+   ```bash
+   cd ~/.node-red
+   npm install node-red-contrib-zwave-js
+   ```
+
+3. Create a new project by cloning this repository using the _Node-RED_ user
    interface:
 
    * Ignore any warnings about encrypted credentials; you'll need to supply your
      own configuration in any event
-   
-3. Build the dashboard:
+
+4. Build the dashboard:
 
    ```bash
    cd ~/.node-red/projects/node-red-zwave-js-example/dashboard
@@ -90,7 +146,7 @@ The versions of software with which this flow was tested:
    npm run build
    ```
 
-4. Add the dashboard path to the `httpStatic` section in _settings.js_:
+5. Add the dashboard path to the `httpStatic` section in _settings.js_:
 
    ```javascript
    httpStatic: [
@@ -105,29 +161,22 @@ The versions of software with which this flow was tested:
 
    where `<user>` represents your user name
 
-5. Restart _Node-RED_, e.g. if it is configured to run as a daemon:
+6. Restart _Node-RED_, e.g. if it is configured to run as a daemon:
 
    ```bash
    sudo systtemctl restart nodered.service
    ```
 
-6. Modify the configuration of the various WebSocket and
-   _node-red-contrib-zwave-js_ nodes in _Node-RED_ to match your local setup.
-
-   * Change the serial port device name in the _ZWave Controller_ node to your
-     controller's port
-
-   * Change the Z-Wave node id in the _ZWave Device_ node in _Node-RED_ to your
-     binary switch's Z-Wave node id (any device should work so long as it
-     supports command class 37)
+7. Modify the configuration of the _ZWave Controller_ node to match your Z-Wave
+   controller's serial port
 
 > (Note: If you are just starting out with Z-Wave and using this flow to perform
 > the initial configuration of your Z-Wave gear, see the
 > [_node-red-contrib-zwave-js_](https://flows.nodered.org/node/node-red-contrib-zwave-js)
 > documentation for how to use its user interface for configuring the controller
 > node and including device nodes in your Z-Wave network. All that is required
-> is one command class 37 (see below) device whose Z-Wave node id must be set in
-> the _ZWave Device_ Node-RED node.)
+> is at least one command class 37 (see below) device whose Z-Wave node id must
+> be set in the _ZWave Device_ Node-RED node.)
 
 Once all of the preceding configuration is complete, you should be able to
 browse to the dashboard by appending `/zwave` to your _Node-RED_ editor URL,
@@ -149,11 +198,9 @@ The features demonstrated by this flow are:
 * The ability to communicate with Z-Wave nodes through a hard-coded reference to
   a particular controller node
 
-* The ability to monitor and control a particular Z-Wave binary switch using
-  hard-coded references to its Z-Wave node id and Command Class (CC).
-
-* The ability to integrate Z-Wave monitoring and control within _Node-RED_ with
-  a HTML5 based user interface using a WebSocket
+* The ability to discover, monitor and control Z-Wave binary switches within
+  _Node-RED_ by way of a HTML5 based user interface using a WebSocket for
+  communication between front and back ends
 
 ## Details
 
@@ -163,187 +210,186 @@ title: Overall System Architecture
 ---
 graph TB
 
-  switch[GE Switch]
+  switch[Binary Switch]
 
-  subgraph client
+  subgraph Client
 
-      browser
+      browser[Web Browser]
 
   end
 
   subgraph Raspberry Pi
 
-      dongle[Aeotec Z-Stick]
+      dongle[USB Z-Wave Controller]
 
       subgraph Node-RED
 
-          flows[flow]
+          flow[Flow]
 
           subgraph node-red-contrib-zwave-js
               controller[ZWave Controller]
-              device[ZWave Device]
-              events[Event Filter]
-              commands[CMD Factory]
           end
 
-          dashboard
+          dashboard[Dashboard]
 
       end
   end
 
-  device <--> controller
-  flows --> commands
-  commands --> device
-  events --> flows
-  device --> events
-  controller <-- USB --> dongle
-  dongle <-- z-wave --> switch
-  browser <-- websocket --> flows
-  browser <-- HTTP --> dashboard
+browser <-- websocket --> flow
+flow <--> controller
+controller <-- serial --> dongle
+dongle <-- z-wave --> switch
+browser <-- HTTP --> dashboard
+dashboard <-- websocket --> flow
 ```
 
-Note that _Node-RED_ is used as the web server for the dashboard in order
-to make this tutorial project as self-contained as possible. The dashboard
-web application has no server side code nor any dependency on _Node-RED_
-other than as a web socket client. It could run in any web server with
-network access to the _Node-RED_ server running this project's flow.
+> Note that _Node-RED_ is used as the web server for the dashboard in order to
+> make this tutorial project as self-contained as possible. The dashboard web
+> application has no server side code nor any dependency on _Node-RED_ other
+> than as a web socket client. It could run in any web server with network
+> access to the _Node-RED_ server running this project's flow.
 
 ### WebSocket Based Event Driven Design
 
 The overall approach used in this example is event-driven using a Z-Wave
-controller and a WebSocket. (Websocket is used rather than MQTT both to make
-this example entirely self-contained but, more importantly, for compatibility
-with browser-based web applications e.g. a home automation user interface.) The
-flow listens for commands to send to a _ZWave Device_ node arriving at a
-_websocket in_ node and sends the output of that _ZWave Device_ node to a
-corresponding _websocket out_ node. Other components such as a home automation
-dashboard web application can connect to that web socket to exchange messages
-with the _ZWave Device_ as demonstrated by the very basic web application that
-is part of this tutorial project.
+controller and a WebSocket. The Websocket protocol is used rather than MQTT both
+to make this example as entirely self-contained as possible and, more
+importantly, for compatibility with browser-based web applications e.g. the home
+automation user interface implemented as a part of this project.
+
+The flow listens for commands arriving at a _websocket in_ node and sends state
+change event messages to a corresponding _websocket out_ node. Other components
+such as the home automation dashboard web application can connect to that web
+socket to exchange messages with the _ZWave Controller_ as demonstrated by the
+very basic web application that is part of this tutorial project.
 
 When a Z-Wave device changes state, whether as a result of receiving a command
 from this flow or by other operations within the Z-Wave network, it transmits a
-status message which is received by the Z-Wave controller. That causes it to
-emit a message from the serial port to which the _ZWave Controller_ node is
-listening. That message is then forwarded to the output of the corresponding
-_ZWave Device_ node and from there to an _Event Filter_ node. The _Event Filter_
-only passes through those messages which match its configuration. In this
-example, messages which report the current value of the binary switch (command
-code 37) are forwarded to the _websocket out_ node for processing by a client
-such as this project's dashboard web application.
+status message over the Z-Wave network which is received by the Z-Wave
+controller. That causes the controller to emit a message from the serial port to
+which the _ZWave Controller_ node is listening in _Node-RED_. In this example,
+messages which report the current value of a binary switch (command class 37)
+used to update an in-memory data model of the current state of all Z-Wave
+devices, which is then forwarded to the _websocket out_ node for processing by a
+client such as this project's dashboard web application.
 
-There can be a slight but sometimes noticable delay between sending a command
+Client applications can send command messages to the WebSocket to which the flow
+is listening, such as when a user toggles the _v-switch_ representing a
+particular binary switch device. The flow handles such commands by tranforming
+them into the format required as input to the _ZWave Controller_ node. The
+_ZWave Controller_ node then sends the command message via the USB stick's
+serial interface to the Z-Wave network. If all goes well, the targeted device
+will respond to the command by reporting the change to its current state as a
+status message over the Z-Wave network, which closes the loop of keeping the
+data model in sync with the physical devices.
+
+There is a slight but sometimes noticable delay between sending a command
 message and receiving one indicating the corresponding change of device state.
 This delay is caused by the overhead of the various processing steps and latency
 in both WebSocket and Z-Wave network communication. But it also means that
 external systems can be confident in the actual state of the devices in the
 Z-Wave network based on those devices' own reporting rather than relying on
-assumptions based on the values in commands sent to them asynchronously.
+assumptions based on optimistically updating the data model to match the values
+in commands without waiting for confirmation that the asynchronous commands were
+properly executed.
 
 ```mermaid
+---
+title: Closed-loop event processing in the dashboard
+---
 sequenceDiagram
 
-  actor user
-  participant browser
+  actor user as User
+  participant dashboard as Dashboard
   participant flow as Node-RED flow
-  participant cmdfactory as CMD Factory node
-  participant devicenode as ZWave Device node
   participant controllernode as ZWave Controller node
   participant dongle as Z-Wave controller device
   participant device as Z-Wave CC 37 device
 
-  user ->> browser: click toggle switch component
+  user ->> dashboard: click toggle switch component
 
   rect rgba(255, 255, 0, 0.1)
-    note over browser, flow: value is true or false depending on the
-    note over browser, flow: state of the toggle switch component
-    browser ->> flow: "set/zwave/2/37:value" via websocket
-    flow ->> cmdfactory: value
-    cmdfactory ->> devicenode: "set value" message
-    devicenode ->> controllernode: "set value" message
+    dashboard ->> flow: "set/zwave/2/37:value" via websocket
+    flow ->> controllernode: "set value" message
     controllernode ->> dongle: "set value" message via serial port
     dongle ->> device: "set value" message via Z-Wave RF protocol
   end
 
+  note over user, device: the sequence from here on is the same no matter what causes the device to change state
+  note over user, device: i.e. the flow operates asynchronously on status messages from Z-Wave nodes without regard to whether or not they occur as direct result of a command previously sent by the flow
+
   device ->> device: change state
 
   rect rgba(0, 255, 255, 0.1)
     device ->> dongle: status message via Z-Wave RF protocol
     dongle ->> flow: status message via serial port
-    note over browser, flow: value is true or false depending on the
-    note over browser, flow: state of the Z-Wave CC 37 device
-    flow ->> browser: "zwave/2/37:value" via websocket
-    browser ->> browser: update toggle switch component state
+    flow ->> flow: update data model
+    flow ->> dashboard: send data model via websocket
+    dashboard ->> dashboard: update UI components' states according to data model
   end
 ```
 
-## Summary
+Other interactions between the front and back ends are variations on the
+preceding sequence. For example, as noted in the preceding sequence diagram, the
+flow sends the updated data model to connected clients each time it receives an
+asynchronous status change message from the Z-Wave network no matter what caused
+a given device's state to change.
 
-* The _ZWave Controller_ node named `Controller` is the singleton which
-  communicates between _Node-RED_ and the Z-Wave mesh network
-
-* The _CMD Factory_ nodes each formats a particular type of message to send to a
-  binary switch (CC 37)
-
-* The _ZWave Device_ node provides the _Node-RED_ model for a partiular Z-Wave
-  device with Z-Wave specified by its node id
-
-* The _Event Filter_ node passes only CC 37 value messages through for
-  subsequent processing by the _Node-RED_ flow, ignoring any other types of
-  messages the node might emit
-
-* The status of the _websocket in_ and _ZWave Controller_ nodes are monitored
-  for client connection events
-
-  * The the _status_ node's output is joined with the `ALL_NODES_READY` status
-    from the _ZWave Controller_
-
-  * Each time a client connects to the WebSocket after all nodes are ready, the
-    _ZWave Device_ node is sent a command requesting that it send its current
-    value for CC 37
-
-  * On receipt of that command message, the Z-Wave device will send a CC 37
-    status
-
-* While connected to the WebSocket:
-
-   * Each client will receive CC 37 value messages from the _ZWave Device_ node
-     from the WebSocket
-
-   * Command messages each client sends to the WebSocket will be forwarded to
-     the _ZWave Device_
-
-Here is the sequence when a client connects; note that it is nearly identical as
-the preceding for a user interacting with the web application:
+The data model is initially created each time the flow starts by handling "all
+nodes ready" messages from the _ZWave Controller_ node in another variation of
+the preceding sequence:
 
 ```mermaid
+---
+title: Build and transmit data model when client connects
+---
 sequenceDiagram
 
-  participant browser
+  participant dashboard as Dashboard
   participant flow as Node-RED flow
-  participant cmdfactory as CMD Factory node
-  participant devicenode as ZWave Device node
   participant controllernode as ZWave Controller node
-  participant dongle as Z-Wave controller device
-  participant device as Z-Wave CC 37 device
 
-  rect rgba(255, 255, 0, 0.1)
-    browser ->> flow: connect to websocket
-    flow ->> cmdfactory: value
-    cmdfactory ->> devicenode: "get value" message
-    devicenode ->> controllernode: "get value" message
-    controllernode ->> dongle: "get value" message via serial port
-    dongle ->> device: "get value" message via Z-Wave RF protocol
+  controllernode ->> flow: "all nodes ready" message
+
+  rect rgba(255, 0, 255, 0.1)
+    flow ->>+ controllernode: "get nodes" command
+    controllernode ->>- flow: node list
+    loop for each node
+      flow ->>+ controllernode: "get value id's" command
+      controllernode ->>- flow: value id's
+      flow ->> flow: update data model
+      flow ->>+ controllernode: "get value" command
+      controllernode ->>- flow: current vaue
+      flow ->> flow: update data model
+    end
   end
-
-  device ->> device: change state
 
   rect rgba(0, 255, 255, 0.1)
-    device ->> dongle: status message via Z-Wave RF protocol
-    dongle ->> flow: status message via serial port
-    note over browser, flow: value is true or false depending on the
-    note over browser, flow: state of the Z-Wave CC 37 device
-    flow ->> browser: "zwave/2/37:value" via websocket
-    browser ->> browser: update toggle switch component state
+    flow ->> dashboard: send data model via websocket
+    dashboard ->> dashboard: update UI components' states according to data model
   end
 ```
+
+### Message Broker
+
+The user is not a participant in the immediately preceding flow since it is
+triggered by direct interactions between _Node-RED_ nodes in the back end. This
+begs the question of how the data model is delivered to the dashboard when it
+might not even have yet been launched when the data model is first constructed?
+
+The interactions labeled "send data model via websocket" in the preceding
+sequences are actually quite oversimplified to keep the diagrams readable. This
+tutorial flow uses _Node-RED_'s context storage to implement a WebSocket-based
+message broker with semantics inspired by MQTT. Each message sent via the broker
+must include both `topic` and `payload` attributes. The `topic` strings are used
+to classify and route messages while any data associated with a given `topic` is
+contained in the `payload`. In addition, a `retain` attribute can optionally be
+included. When `retain` is `true`, the broker stores the message in the flow's
+context as well as forwarding it to all currently connected clients. When a
+client subsequently connects, it is immediately sent all currently retained
+messages. The general pattern in this flow is that messages containing the data
+model sent from the back end have `retain` set to `true` while command messages
+sent from the front end have `retain` omitted or set to `false`. That way, the
+current state of the data model is shared among all clients, no matter when or
+in what order they connect, while commands are only handled only by currently
+connected listeners in real time.
