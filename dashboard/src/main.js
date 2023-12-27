@@ -57,6 +57,9 @@ app.provide('websocketPublish', websocketPublish)
 const zwaveNetworks = ref({})
 app.provide('zwaveNetworks', zwaveNetworks)
 
+const zwaveControllerStatus = ref('')
+app.provide('zwaveControllerStatus', zwaveControllerStatus)
+
 ///////////////////////////////////////////////////////////////////////////////
 // connect to the back end using a websocket
 ///////////////////////////////////////////////////////////////////////////////
@@ -157,6 +160,13 @@ function connectWS() {
             zwaveNetworks.value = msg.payload
             return
             
+        }
+
+        if (msg.topic == 'zwave/controller/status') {
+
+            zwaveControllerStatus.value = msg.payload
+            return
+
         }
     }
 }

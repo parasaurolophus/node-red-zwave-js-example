@@ -122,9 +122,18 @@ The versions of software with which this flow was tested:
        enabled: true,
    ```
 
-   Remember to restart the _Node-RED_ process each time you modify _settings.js_
+2. Add a file-system backed context store named `file` in _settings.js_:
 
-2. Install _node-red-contrib-zwave-js_ either throug the palette manager UI in
+   ```javascript
+   contextStorage: {
+
+      default: { module: 'memory' },
+      file: { module: 'localfilesystem' }
+
+   },
+   ```
+
+3. Install _node-red-contrib-zwave-js_ either throug the palette manager UI in
    _Node-RED_ or at the command line
 
    ```bash
@@ -132,13 +141,13 @@ The versions of software with which this flow was tested:
    npm install node-red-contrib-zwave-js
    ```
 
-3. Create a new project by cloning this repository using the _Node-RED_ user
+4. Create a new project by cloning this repository using the _Node-RED_ user
    interface:
 
    * Ignore any warnings about encrypted credentials; you'll need to supply your
      own configuration in any event
 
-4. Build the dashboard:
+5. Build the dashboard:
 
    ```bash
    cd ~/.node-red/projects/node-red-zwave-js-example/dashboard
@@ -146,7 +155,7 @@ The versions of software with which this flow was tested:
    npm run build
    ```
 
-5. Add the dashboard path to the `httpStatic` section in _settings.js_:
+6. Add the dashboard path to the `httpStatic` section in _settings.js_:
 
    ```javascript
    httpStatic: [
@@ -161,13 +170,13 @@ The versions of software with which this flow was tested:
 
    where `<user>` represents your user name
 
-6. Restart _Node-RED_, e.g. if it is configured to run as a daemon:
+7. Restart _Node-RED_, e.g. if it is configured to run as a daemon:
 
    ```bash
    sudo systtemctl restart nodered.service
    ```
 
-7. Modify the configuration of the _ZWave Controller_ node to match your Z-Wave
+8. Modify the configuration of the _ZWave Controller_ node to match your Z-Wave
    controller's serial port
 
 > (Note: If you are just starting out with Z-Wave and using this flow to perform
@@ -309,23 +318,28 @@ sequenceDiagram
   user ->> dashboard: click toggle switch component
 
   rect rgba(255, 255, 0, 0.1)
-    dashboard ->> flow: "set/zwave/2/37:value" via websocket
-    flow ->> controllernode: "set value" message
+    dashboard ->>+ flow: "set/zwave/2/37:value" via websocket
+    flow ->>- controllernode: "set value" message
     controllernode ->> dongle: "set value" message via serial port
-    dongle ->> device: "set value" message via Z-Wave RF protocol
+    dongle ->>+ device: "set value" message via Z-Wave RF protocol
   end
 
-  note over user, device: the sequence from here on is the same no matter what causes the device to change state
-  note over user, device: i.e. the flow operates asynchronously on status messages from Z-Wave nodes without regard to whether or not they occur as direct result of a command previously sent by the flow
-
-  device ->> device: change state
-
   rect rgba(0, 255, 255, 0.1)
-    device ->> dongle: status message via Z-Wave RF protocol
-    dongle ->> flow: status message via serial port
+
+    note over user, device: the sequence from here on is the same no matter what causes the device to change state
+    note over user, device: i.e. the flow operates asynchronously on status messages from Z-Wave nodes without regard to whether or not they occur as direct result of a command previously sent by the flow
+
+    device ->> device: change state
+    device ->>- dongle: status message via Z-Wave RF protocol
+    dongle ->>+ controllernode: status message via serial port
+    controllernode ->>- flow: status message
+    activate flow
     flow ->> flow: update data model
     flow ->> dashboard: send data model via websocket
+    deactivate flow
+    activate dashboard
     dashboard ->> dashboard: update UI components' states according to data model
+    deactivate dashboard
   end
 ```
 
@@ -336,38 +350,38 @@ asynchronous status change message from the Z-Wave network no matter what caused
 a given device's state to change.
 
 The data model is initially created each time the flow starts by handling "all
-nodes ready" messages from the _ZWave Controller_ node in another variation of
-the preceding sequence:
+nodes ready" messages from the _ZWave Controller_ node:
 
 ```mermaid
 ---
-title: Build and transmit data model when client connects
+title: Initialize Z-Wave Network Model On Receipt of ALL_NODES_READY
 ---
 sequenceDiagram
 
-  participant dashboard as Dashboard
-  participant flow as Node-RED flow
-  participant controllernode as ZWave Controller node
+    participant controller as Z-Wave Controller
+    participant flow as Flow
+    participant client as Client(s)
 
-  controllernode ->> flow: "all nodes ready" message
+    controller ->> flow: ALL_NODES_READY
+    flow ->> controller: getNodes
+    controller ->>+ flow: NODE_LIST
 
-  rect rgba(255, 0, 255, 0.1)
-    flow ->>+ controllernode: "get nodes" command
-    controllernode ->>- flow: node list
-    loop for each node
-      flow ->>+ controllernode: "get value id's" command
-      controllernode ->>- flow: value id's
-      flow ->> flow: update data model
-      flow ->>+ controllernode: "get value" command
-      controllernode ->>- flow: current vaue
-      flow ->> flow: update data model
+    loop for each z-wave node id
+
+        flow ->> flow: add device to cached network model
+        flow ->>- controller: getValueIds
+        controller ->> flow: VALUE_ID_LIST
+
+        loop for each value id
+
+          opt property == currentValue
+              flow ->> controller: getValue
+              controller ->>+ flow: GET_VALUE_RESPONSE
+              flow ->> flow: update cached network model for device
+              flow ->>- client: send cached model
+          end
+        end
     end
-  end
-
-  rect rgba(0, 255, 255, 0.1)
-    flow ->> dashboard: send data model via websocket
-    dashboard ->> dashboard: update UI components' states according to data model
-  end
 ```
 
 ### Message Broker

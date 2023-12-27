@@ -44,8 +44,12 @@
     </v-card>
   </v-card>
   <v-card>
+    <v-card-title>Z-Wave Controller Status</v-card-title>
+    <v-card-text :class="zwaveControllerStatus.fill">{{ zwaveControllerStatus.text }}</v-card-text>
+  </v-card>
+  <v-card>
     <v-card-title>Z-Wave Network Data Model</v-card-title>
-    <v-card-text><pre>{{ zwaveNetworks }}</pre></v-card-text>
+    <v-card-text><pre>{{ JSON.stringify(zwaveNetworks, undefined, 2) }}</pre></v-card-text>
   </v-card>
 </template>
 
@@ -71,6 +75,30 @@ th {
 .note {
   font-style: italic;
 }
+
+.red {
+  color: red;
+}
+
+.blue {
+  color: blue;
+}
+
+.green {
+  color: green;
+}
+
+.yellow {
+  color: darkgoldenrod;
+}
+
+.black {
+  color: black;
+}
+
+.gray, .grey {
+  color: gray;
+}
 </style>
 
 <script setup>
@@ -79,4 +107,5 @@ import { inject } from 'vue'
 const websocketStatus = inject('websocketStatus')
 const websocketPublish = inject('websocketPublish')
 const zwaveNetworks = inject('zwaveNetworks')
+const zwaveControllerStatus = inject('zwaveControllerStatus')
 </script>
