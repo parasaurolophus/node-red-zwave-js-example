@@ -8,11 +8,11 @@
         "env": []
     },
     {
-        "id": "a97dfe7bb351bf46",
+        "id": "41fbbe36871302f9",
         "type": "tab",
         "label": "Message Broker",
         "disabled": false,
-        "info": "",
+        "info": "WebSocket based message broker with semantics inspired by MQTT 3.x",
         "env": []
     },
     {
@@ -55,33 +55,6 @@
         "y": 159,
         "w": 1372,
         "h": 242
-    },
-    {
-        "id": "c86dc82a6849388d",
-        "type": "group",
-        "z": "a97dfe7bb351bf46",
-        "name": "automation message broker with semnatics inspired by mqtt",
-        "style": {
-            "stroke": "none",
-            "fill": "#000000",
-            "fill-opacity": "0.1",
-            "label": true,
-            "color": "#000000"
-        },
-        "nodes": [
-            "96c70db260437753",
-            "6b25f4c463835160",
-            "b857726cf2a5c767",
-            "529cc14a539ac320",
-            "38efdcf08073a5ac",
-            "c554502adc5b7656",
-            "5f14ec4cee3294ac",
-            "9383af2d758e72c8"
-        ],
-        "x": 14,
-        "y": 19,
-        "w": 792,
-        "h": 202
     },
     {
         "id": "77c15860555312f9",
@@ -186,9 +159,35 @@
         "h": 182
     },
     {
+        "id": "9f5cd0f49019ccbd",
+        "type": "group",
+        "z": "41fbbe36871302f9",
+        "name": "automation message broker with semnatics inspired by mqtt",
+        "style": {
+            "stroke": "none",
+            "fill": "#000000",
+            "fill-opacity": "0.1",
+            "label": true,
+            "color": "#000000"
+        },
+        "nodes": [
+            "850bcdb0dc51cae8",
+            "0a466ae6484ea08d",
+            "ad2823c8d3790d72",
+            "5553c22baaeb1b99",
+            "9a458b33c80238e5",
+            "e3245994f6289398",
+            "3eec2edbf0f4a824",
+            "a00fbe739d40ce56"
+        ],
+        "x": 14,
+        "y": 19,
+        "w": 792,
+        "h": 202
+    },
+    {
         "id": "d4736a641abe6778",
         "type": "websocket-listener",
-        "z": "a97dfe7bb351bf46",
         "path": "/ws/automation",
         "wholemsg": "true"
     },
@@ -1272,10 +1271,10 @@
         "l": true
     },
     {
-        "id": "96c70db260437753",
+        "id": "850bcdb0dc51cae8",
         "type": "websocket out",
-        "z": "a97dfe7bb351bf46",
-        "g": "c86dc82a6849388d",
+        "z": "41fbbe36871302f9",
+        "g": "9f5cd0f49019ccbd",
         "name": "",
         "server": "d4736a641abe6778",
         "client": "",
@@ -1284,10 +1283,10 @@
         "wires": []
     },
     {
-        "id": "6b25f4c463835160",
+        "id": "0a466ae6484ea08d",
         "type": "function",
-        "z": "a97dfe7bb351bf46",
-        "g": "c86dc82a6849388d",
+        "z": "41fbbe36871302f9",
+        "g": "9f5cd0f49019ccbd",
         "name": "retain",
         "func": "const retained = flow.get('retained') || {}\n\ntry {\n\n    if (msg.retain === true) {\n\n        if (msg.topic === undefined) {\n\n            node.error(\"topic required when retain is true\", msg);\n            return msg\n\n        }\n\n        if ((msg.payload !== undefined) && (msg.payload !== '')) {\n\n            retained[msg.topic] = RED.util.cloneMessage(msg)\n\n        } else {\n\n            delete retained[msg.topic]\n\n        }\n\n        flow.set('retained', retained)\n        const message = RED.util.cloneMessage(msg)\n        delete message._session\n        message.retain = false\n        return message\n\n    }\n\n    return msg\n\n} finally {\n\n    node.status({\n        fill: 'blue',\n        shape: 'dot',\n        text: Object.keys(retained).length\n    })\n\n}",
         "outputs": 1,
@@ -1300,32 +1299,32 @@
         "y": 100,
         "wires": [
             [
-                "96c70db260437753"
+                "850bcdb0dc51cae8"
             ]
         ]
     },
     {
-        "id": "b857726cf2a5c767",
+        "id": "ad2823c8d3790d72",
         "type": "status",
-        "z": "a97dfe7bb351bf46",
-        "g": "c86dc82a6849388d",
+        "z": "41fbbe36871302f9",
+        "g": "9f5cd0f49019ccbd",
         "name": "client connection",
         "scope": [
-            "c554502adc5b7656"
+            "e3245994f6289398"
         ],
         "x": 220,
         "y": 180,
         "wires": [
             [
-                "529cc14a539ac320"
+                "5553c22baaeb1b99"
             ]
         ]
     },
     {
-        "id": "529cc14a539ac320",
+        "id": "5553c22baaeb1b99",
         "type": "switch",
-        "z": "a97dfe7bb351bf46",
-        "g": "c86dc82a6849388d",
+        "z": "41fbbe36871302f9",
+        "g": "9f5cd0f49019ccbd",
         "name": "",
         "property": "status.event",
         "propertyType": "msg",
@@ -1343,15 +1342,15 @@
         "y": 180,
         "wires": [
             [
-                "38efdcf08073a5ac"
+                "9a458b33c80238e5"
             ]
         ]
     },
     {
-        "id": "38efdcf08073a5ac",
+        "id": "9a458b33c80238e5",
         "type": "function",
-        "z": "a97dfe7bb351bf46",
-        "g": "c86dc82a6849388d",
+        "z": "41fbbe36871302f9",
+        "g": "9f5cd0f49019ccbd",
         "name": "retained",
         "func": "const retained = flow.get('retained') || {}\nconst messages = Object.values(retained)\n\ntry {\n\n    return [messages]\n\n} finally {\n\n    node.status({\n        fill: 'blue',\n        shape: 'dot',\n        text: messages.length\n    })\n\n}",
         "outputs": 1,
@@ -1364,15 +1363,15 @@
         "y": 180,
         "wires": [
             [
-                "96c70db260437753"
+                "850bcdb0dc51cae8"
             ]
         ]
     },
     {
-        "id": "c554502adc5b7656",
+        "id": "e3245994f6289398",
         "type": "websocket in",
-        "z": "a97dfe7bb351bf46",
-        "g": "c86dc82a6849388d",
+        "z": "41fbbe36871302f9",
+        "g": "9f5cd0f49019ccbd",
         "name": "",
         "server": "d4736a641abe6778",
         "client": "",
@@ -1380,15 +1379,15 @@
         "y": 100,
         "wires": [
             [
-                "5f14ec4cee3294ac"
+                "3eec2edbf0f4a824"
             ]
         ]
     },
     {
-        "id": "5f14ec4cee3294ac",
+        "id": "3eec2edbf0f4a824",
         "type": "change",
-        "z": "a97dfe7bb351bf46",
-        "g": "c86dc82a6849388d",
+        "z": "41fbbe36871302f9",
+        "g": "9f5cd0f49019ccbd",
         "name": "",
         "rules": [
             {
@@ -1406,15 +1405,15 @@
         "y": 100,
         "wires": [
             [
-                "6b25f4c463835160"
+                "0a466ae6484ea08d"
             ]
         ]
     },
     {
-        "id": "9383af2d758e72c8",
+        "id": "a00fbe739d40ce56",
         "type": "comment",
-        "z": "a97dfe7bb351bf46",
-        "g": "c86dc82a6849388d",
+        "z": "41fbbe36871302f9",
+        "g": "9f5cd0f49019ccbd",
         "name": "assumes a file-system backed context store exists named 'file'",
         "info": "for _~/.node-red/settings.js_:\n\n```javascript\ncontextStorage: {\n\n    default: { module: 'memory' },\n    file: { module: 'localfilesystem' }\n\n},\n```",
         "x": 260,

@@ -4,7 +4,11 @@
 
 > _All links on this page were working as of December 15, 2023._
 
-![flow](flow-screenshot.png)
+![flow](z-wave-controller-flow.png)
+
+---
+
+![broker](message-broker-flow.png)
 
 ## About
 
