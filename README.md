@@ -4,11 +4,7 @@
 
 > _All links on this page were working as of December 15, 2023._
 
-![flow](z-wave-controller-flow.png)
-
----
-
-![broker](message-broker-flow.png)
+![flow](zwave-back-end-flow.png)
 
 ## About
 
@@ -358,7 +354,7 @@ nodes ready" messages from the _ZWave Controller_ node:
 
 ```mermaid
 ---
-title: Initialize Z-Wave Network Model On Receipt of ALL_NODES_READY
+title: Initialize Data Model On Receipt of ALL_NODES_READY
 ---
 sequenceDiagram
 
@@ -372,7 +368,7 @@ sequenceDiagram
 
     loop for each z-wave node id
 
-        flow ->> flow: add device to cached network model
+        flow ->> flow: add device to cached data model
         flow ->>- controller: getValueIds
         controller ->> flow: VALUE_ID_LIST
 
@@ -381,8 +377,8 @@ sequenceDiagram
           opt property == currentValue
               flow ->> controller: getValue
               controller ->>+ flow: GET_VALUE_RESPONSE
-              flow ->> flow: update cached network model for device
-              flow ->>- client: send cached model
+              flow ->> flow: update cached data model for device
+              flow ->>- client: send data model via websocket
           end
         end
     end
@@ -409,5 +405,5 @@ messages. The general pattern in this flow is that messages containing the data
 model sent from the back end have `retain` set to `true` while command messages
 sent from the front end have `retain` omitted or set to `false`. That way, the
 current state of the data model is shared among all clients, no matter when or
-in what order they connect, while commands are only handled only by currently
+in what order they connect, while commands are only handled by currently
 connected listeners in real time.

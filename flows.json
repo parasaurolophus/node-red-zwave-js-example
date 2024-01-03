@@ -2,24 +2,16 @@
     {
         "id": "1f411be02ab63862",
         "type": "tab",
-        "label": "Z-Wave Controller",
+        "label": "Z-Wave Back End",
         "disabled": false,
         "info": "",
-        "env": []
-    },
-    {
-        "id": "41fbbe36871302f9",
-        "type": "tab",
-        "label": "Message Broker",
-        "disabled": false,
-        "info": "WebSocket based message broker with semantics inspired by MQTT 3.x",
         "env": []
     },
     {
         "id": "800b06c9c0e3dff7",
         "type": "group",
         "z": "1f411be02ab63862",
-        "name": "exchange messages with z-wave controller",
+        "name": "exchange messages with the z-wave controller",
         "style": {
             "stroke": "none",
             "fill": "#000000",
@@ -31,138 +23,23 @@
             "807b59493c63c6b5",
             "8f73c98ea2fb6019",
             "c464961f4d24a38b",
-            "712857b73501e96a",
-            "1a0cab3de23ecf0c",
-            "4bc3610ddc285e04",
-            "063ba55d44ccd84a",
-            "84f806ac6efa3037",
-            "a57bc6b06e714885",
-            "f25df70eb9464d09",
-            "10129746c3677820",
-            "fe82b1b65fd7042a",
-            "76049d71e0f18037",
-            "774a45fd82b39e49",
-            "6235c2a237d187b4",
-            "052dca420f30f468",
-            "7727b1ae3a741131",
-            "da91aeb1badc2cc6",
-            "b033eb67405d512f",
-            "8851c91d5f4ac235",
-            "d1cc926a0732e498",
-            "99a84367f7bf4ffa"
+            "c629c0f061d79636",
+            "3b28f3ed3d02b87a",
+            "b88315dabf11d321",
+            "8c7c5fd3f15db0ef",
+            "cf249a30ab12da8c"
         ],
         "x": 34,
-        "y": 159,
-        "w": 1372,
-        "h": 242
-    },
-    {
-        "id": "77c15860555312f9",
-        "type": "group",
-        "z": "1f411be02ab63862",
-        "name": "forward commands from clients to z-wave controller",
-        "style": {
-            "stroke": "none",
-            "fill": "#000000",
-            "fill-opacity": "0.1",
-            "label": true,
-            "color": "#000000"
-        },
-        "nodes": [
-            "3431af9fadf254c0",
-            "da5269e74a9b54dd",
-            "e561194217443d28",
-            "8ba1b10ce727a1f3",
-            "8a3d176644e579db"
-        ],
-        "x": 34,
-        "y": 19,
-        "w": 892,
-        "h": 122
-    },
-    {
-        "id": "af5868441cac20d3",
-        "type": "group",
-        "z": "1f411be02ab63862",
-        "name": "forward VALUE_UPDATED messages to clients",
-        "style": {
-            "label": true,
-            "stroke": "none",
-            "fill": "#000000",
-            "fill-opacity": "0.1",
-            "color": "#000000",
-            "label-position": "sw"
-        },
-        "nodes": [
-            "9ee9d0011c3da8fe",
-            "6c7e25e13cc8dc0b",
-            "cbce903350b96584",
-            "13366aaaed6d6a0e",
-            "f8a3dae5a7167584"
-        ],
-        "x": 374,
-        "y": 519,
-        "w": 972,
-        "h": 90
-    },
-    {
-        "id": "f2230ea95240b9c0",
-        "type": "group",
-        "z": "1f411be02ab63862",
-        "name": "forward GET_VALUE_RESPONSE messages to clients",
-        "style": {
-            "stroke": "none",
-            "fill": "#000000",
-            "fill-opacity": "0.1",
-            "label": true,
-            "color": "#000000",
-            "label-position": "sw"
-        },
-        "nodes": [
-            "be0fb486ed97a353",
-            "06f3bbbc1d516cf1",
-            "6fcf2b7a2b9cbf10",
-            "f5304bc4374c63ec"
-        ],
-        "x": 474,
-        "y": 419,
-        "w": 872,
-        "h": 90
-    },
-    {
-        "id": "e6bef42fa28d88a9",
-        "type": "group",
-        "z": "1f411be02ab63862",
-        "name": "send z-wave controller connection status to clients",
-        "style": {
-            "stroke": "none",
-            "fill": "#000000",
-            "fill-opacity": "0.1",
-            "label": true,
-            "color": "#000000"
-        },
-        "nodes": [
-            "5fcf03941d248d26",
-            "ba4c6018b004ebe4",
-            "86b259c55abdad3c",
-            "010d5dd2a0ed1243",
-            "aa999e9350e9a507",
-            "70c033dfbc378ee6",
-            "bb1e653386e2ab9d",
-            "78f6ec76be5e10e9",
-            "01d2633aa2dfb782",
-            "9276f1baa86c1f67"
-        ],
-        "x": 34,
-        "y": 619,
-        "w": 1332,
-        "h": 182
+        "y": 859,
+        "w": 792,
+        "h": 242,
+        "info": "In addition to handling commands sent by clients, implements\ninitialization logic triggered by the controller emitting\n`ALL_NODES_READY`:\n\n```mermaid\n---\ntitle: Initialize Z-Wave Network Model On Receipt of ALL_NODES_READY\n---\nsequenceDiagram\n\n    participant controller as Z-Wave Controller\n    participant flow as Flow\n    participant client as Client(s)\n\n    controller ->> flow: ALL_NODES_READY\n    flow ->> controller: getNodes\n    controller ->>+ flow: NODE_LIST\n\n    loop for each z-wave node id\n\n        flow ->> flow: add device to cached network model\n        flow ->>- controller: getValueIds\n        controller ->> flow: VALUE_ID_LIST\n\n        loop for each value id\n\n          opt property == currentValue\n              flow ->> controller: getValue\n              controller ->>+ flow: GET_VALUE_RESPONSE\n              flow ->> flow: update cached network model for device\n              flow ->>- client: send cached model\n          end\n        end\n    end\n```\n"
     },
     {
         "id": "9f5cd0f49019ccbd",
         "type": "group",
-        "z": "41fbbe36871302f9",
-        "name": "automation message broker with semnatics inspired by mqtt",
+        "z": "1f411be02ab63862",
+        "name": "websocket based message broker with semantics inspired by mqtt",
         "style": {
             "stroke": "none",
             "fill": "#000000",
@@ -177,17 +54,159 @@
             "5553c22baaeb1b99",
             "9a458b33c80238e5",
             "e3245994f6289398",
-            "3eec2edbf0f4a824",
-            "a00fbe739d40ce56"
+            "3eec2edbf0f4a824"
         ],
-        "x": 14,
-        "y": 19,
+        "x": 34,
+        "y": 79,
         "w": 792,
-        "h": 202
+        "h": 162
+    },
+    {
+        "id": "e97e1f069abed9d0",
+        "type": "group",
+        "z": "1f411be02ab63862",
+        "name": "forward commands from websocket clients to the z-wave controller",
+        "style": {
+            "stroke": "none",
+            "fill": "#000000",
+            "fill-opacity": "0.1",
+            "label": true,
+            "color": "#000000"
+        },
+        "nodes": [
+            "3431af9fadf254c0",
+            "da5269e74a9b54dd",
+            "e561194217443d28",
+            "8ba1b10ce727a1f3"
+        ],
+        "x": 34,
+        "y": 259,
+        "w": 892,
+        "h": 82
+    },
+    {
+        "id": "40214102557f4c72",
+        "type": "group",
+        "z": "1f411be02ab63862",
+        "name": "handle ALL_NODES_READY event from the z-wave controller by fetching data for all nodes",
+        "style": {
+            "label": true,
+            "stroke": "none",
+            "fill": "#000000",
+            "fill-opacity": "0.1",
+            "color": "#000000"
+        },
+        "nodes": [
+            "774a45fd82b39e49",
+            "6235c2a237d187b4",
+            "5258b20647259df8"
+        ],
+        "x": 34,
+        "y": 359,
+        "w": 577,
+        "h": 82
+    },
+    {
+        "id": "94572c166b5f0613",
+        "type": "group",
+        "z": "1f411be02ab63862",
+        "name": "handle NODE_LIST event from the z-wave controller by fetching all value id's for each node",
+        "style": {
+            "stroke": "none",
+            "fill": "#000000",
+            "fill-opacity": "0.1",
+            "label": true,
+            "color": "#000000"
+        },
+        "nodes": [
+            "f25df70eb9464d09",
+            "10129746c3677820",
+            "052dca420f30f468",
+            "fe82b1b65fd7042a",
+            "76049d71e0f18037",
+            "860f1bc78e06336e"
+        ],
+        "x": 34,
+        "y": 459,
+        "w": 952,
+        "h": 82
+    },
+    {
+        "id": "03ed41ef819b3f99",
+        "type": "group",
+        "z": "1f411be02ab63862",
+        "name": "handle VALUE_ID_LIST event from the z-wave controller by fetching currentValue for each value id with such a property",
+        "style": {
+            "stroke": "none",
+            "fill": "#000000",
+            "fill-opacity": "0.1",
+            "label": true,
+            "color": "#000000"
+        },
+        "nodes": [
+            "1a0cab3de23ecf0c",
+            "4bc3610ddc285e04",
+            "063ba55d44ccd84a",
+            "84f806ac6efa3037",
+            "a57bc6b06e714885",
+            "d9b4e9ecf74b13d6"
+        ],
+        "x": 34,
+        "y": 559,
+        "w": 932,
+        "h": 82
+    },
+    {
+        "id": "136bdd2bcb510ec7",
+        "type": "group",
+        "z": "1f411be02ab63862",
+        "name": "handle GET_VALUE_RESPONSE event from the z-wave controller by updating the data model and sending it to all websocket clients",
+        "style": {
+            "label": true,
+            "stroke": "none",
+            "fill": "#000000",
+            "fill-opacity": "0.1",
+            "color": "#000000"
+        },
+        "nodes": [
+            "06f3bbbc1d516cf1",
+            "6fcf2b7a2b9cbf10",
+            "f5304bc4374c63ec",
+            "d19197aaef49587d"
+        ],
+        "x": 34,
+        "y": 659,
+        "w": 912,
+        "h": 82
+    },
+    {
+        "id": "894703fb3772f644",
+        "type": "group",
+        "z": "1f411be02ab63862",
+        "name": "handle VALUE_UPDATED event from the z-wave controller by updating the data model and sending it to all websocket clients",
+        "style": {
+            "stroke": "none",
+            "fill": "#000000",
+            "fill-opacity": "0.1",
+            "label": true,
+            "color": "#000000"
+        },
+        "nodes": [
+            "03ee2356a0e55d3c",
+            "13366aaaed6d6a0e",
+            "cbce903350b96584",
+            "6c7e25e13cc8dc0b",
+            "9ee9d0011c3da8fe"
+        ],
+        "x": 34,
+        "y": 759,
+        "w": 1052,
+        "h": 82
     },
     {
         "id": "d4736a641abe6778",
         "type": "websocket-listener",
+        "z": "1f411be02ab63862",
         "path": "/ws/automation",
         "wholemsg": "true"
     },
@@ -231,8 +250,8 @@
         "FWlicenseKey": "NON-COMMERCIAL",
         "scalesTemp": "0x01",
         "scalesHumidity": "0x00",
-        "x": 330,
-        "y": 280,
+        "x": 290,
+        "y": 980,
         "wires": [
             [
                 "807b59493c63c6b5"
@@ -277,23 +296,23 @@
         "checkall": "false",
         "repair": false,
         "outputs": 5,
-        "x": 490,
-        "y": 280,
+        "x": 450,
+        "y": 980,
         "wires": [
             [
-                "712857b73501e96a"
+                "c629c0f061d79636"
             ],
             [
-                "f25df70eb9464d09"
+                "3b28f3ed3d02b87a"
             ],
             [
-                "1a0cab3de23ecf0c"
+                "b88315dabf11d321"
             ],
             [
-                "da91aeb1badc2cc6"
+                "8c7c5fd3f15db0ef"
             ],
             [
-                "7727b1ae3a741131"
+                "cf249a30ab12da8c"
             ]
         ]
     },
@@ -302,15 +321,15 @@
         "type": "link in",
         "z": "1f411be02ab63862",
         "g": "800b06c9c0e3dff7",
-        "name": "z-wave command",
+        "name": "command",
         "links": [
             "6235c2a237d187b4",
             "76049d71e0f18037",
             "8ba1b10ce727a1f3",
             "a57bc6b06e714885"
         ],
-        "x": 140,
-        "y": 280,
+        "x": 120,
+        "y": 980,
         "wires": [
             [
                 "8f73c98ea2fb6019"
@@ -322,7 +341,7 @@
         "id": "10129746c3677820",
         "type": "split",
         "z": "1f411be02ab63862",
-        "g": "800b06c9c0e3dff7",
+        "g": "94572c166b5f0613",
         "name": "",
         "splt": "\\n",
         "spltType": "str",
@@ -330,8 +349,8 @@
         "arraySpltType": "len",
         "stream": false,
         "addname": "",
-        "x": 770,
-        "y": 240,
+        "x": 390,
+        "y": 500,
         "wires": [
             [
                 "052dca420f30f468"
@@ -342,7 +361,7 @@
         "id": "f25df70eb9464d09",
         "type": "change",
         "z": "1f411be02ab63862",
-        "g": "800b06c9c0e3dff7",
+        "g": "94572c166b5f0613",
         "name": "object",
         "rules": [
             {
@@ -370,8 +389,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 650,
-        "y": 240,
+        "x": 270,
+        "y": 500,
         "wires": [
             [
                 "10129746c3677820"
@@ -382,7 +401,7 @@
         "id": "fe82b1b65fd7042a",
         "type": "change",
         "z": "1f411be02ab63862",
-        "g": "800b06c9c0e3dff7",
+        "g": "94572c166b5f0613",
         "name": "getDefinedValueIDs",
         "rules": [
             {
@@ -398,8 +417,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 1090,
-        "y": 240,
+        "x": 710,
+        "y": 500,
         "wires": [
             [
                 "76049d71e0f18037"
@@ -410,14 +429,14 @@
         "id": "76049d71e0f18037",
         "type": "link out",
         "z": "1f411be02ab63862",
-        "g": "800b06c9c0e3dff7",
-        "name": "z-wave command",
+        "g": "94572c166b5f0613",
+        "name": "get value id's",
         "mode": "link",
         "links": [
             "c464961f4d24a38b"
         ],
-        "x": 1290,
-        "y": 240,
+        "x": 890,
+        "y": 500,
         "wires": [],
         "l": true
     },
@@ -425,7 +444,7 @@
         "id": "1a0cab3de23ecf0c",
         "type": "change",
         "z": "1f411be02ab63862",
-        "g": "800b06c9c0e3dff7",
+        "g": "03ed41ef819b3f99",
         "name": "node:object",
         "rules": [
             {
@@ -448,8 +467,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 670,
-        "y": 280,
+        "x": 310,
+        "y": 600,
         "wires": [
             [
                 "4bc3610ddc285e04"
@@ -460,7 +479,7 @@
         "id": "4bc3610ddc285e04",
         "type": "split",
         "z": "1f411be02ab63862",
-        "g": "800b06c9c0e3dff7",
+        "g": "03ed41ef819b3f99",
         "name": "",
         "splt": "\\n",
         "spltType": "str",
@@ -468,8 +487,8 @@
         "arraySpltType": "len",
         "stream": false,
         "addname": "",
-        "x": 810,
-        "y": 280,
+        "x": 450,
+        "y": 600,
         "wires": [
             [
                 "063ba55d44ccd84a"
@@ -480,7 +499,7 @@
         "id": "063ba55d44ccd84a",
         "type": "switch",
         "z": "1f411be02ab63862",
-        "g": "800b06c9c0e3dff7",
+        "g": "03ed41ef819b3f99",
         "name": "currentValue",
         "property": "payload.property",
         "propertyType": "msg",
@@ -494,8 +513,8 @@
         "checkall": "true",
         "repair": false,
         "outputs": 1,
-        "x": 950,
-        "y": 280,
+        "x": 590,
+        "y": 600,
         "wires": [
             [
                 "84f806ac6efa3037"
@@ -506,7 +525,7 @@
         "id": "84f806ac6efa3037",
         "type": "change",
         "z": "1f411be02ab63862",
-        "g": "800b06c9c0e3dff7",
+        "g": "03ed41ef819b3f99",
         "name": "getValue",
         "rules": [
             {
@@ -522,8 +541,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 1100,
-        "y": 280,
+        "x": 740,
+        "y": 600,
         "wires": [
             [
                 "a57bc6b06e714885"
@@ -534,50 +553,22 @@
         "id": "a57bc6b06e714885",
         "type": "link out",
         "z": "1f411be02ab63862",
-        "g": "800b06c9c0e3dff7",
-        "name": "z-wave command",
+        "g": "03ed41ef819b3f99",
+        "name": "get value",
         "mode": "link",
         "links": [
             "c464961f4d24a38b"
         ],
-        "x": 1270,
-        "y": 280,
+        "x": 880,
+        "y": 600,
         "wires": [],
         "l": true
-    },
-    {
-        "id": "712857b73501e96a",
-        "type": "change",
-        "z": "1f411be02ab63862",
-        "g": "800b06c9c0e3dff7",
-        "name": "ready",
-        "rules": [
-            {
-                "t": "set",
-                "p": "topic",
-                "pt": "msg",
-                "to": "ready",
-                "tot": "str"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 650,
-        "y": 200,
-        "wires": [
-            [
-                "774a45fd82b39e49"
-            ]
-        ]
     },
     {
         "id": "774a45fd82b39e49",
         "type": "change",
         "z": "1f411be02ab63862",
-        "g": "800b06c9c0e3dff7",
+        "g": "40214102557f4c72",
         "name": "getNodes",
         "rules": [
             {
@@ -593,8 +584,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 780,
-        "y": 200,
+        "x": 340,
+        "y": 400,
         "wires": [
             [
                 "6235c2a237d187b4"
@@ -605,14 +596,14 @@
         "id": "6235c2a237d187b4",
         "type": "link out",
         "z": "1f411be02ab63862",
-        "g": "800b06c9c0e3dff7",
-        "name": "z-wave command",
+        "g": "40214102557f4c72",
+        "name": "get nodes",
         "mode": "link",
         "links": [
             "c464961f4d24a38b"
         ],
-        "x": 950,
-        "y": 200,
+        "x": 480,
+        "y": 400,
         "wires": [],
         "l": true
     },
@@ -620,7 +611,7 @@
         "id": "da5269e74a9b54dd",
         "type": "switch",
         "z": "1f411be02ab63862",
-        "g": "77c15860555312f9",
+        "g": "e97e1f069abed9d0",
         "name": "^set/zwave/\\d+/\\d+/\\d+/\\d+$",
         "property": "topic",
         "propertyType": "msg",
@@ -636,7 +627,7 @@
         "repair": false,
         "outputs": 1,
         "x": 500,
-        "y": 100,
+        "y": 300,
         "wires": [
             [
                 "e561194217443d28"
@@ -647,7 +638,7 @@
         "id": "e561194217443d28",
         "type": "change",
         "z": "1f411be02ab63862",
-        "g": "77c15860555312f9",
+        "g": "e97e1f069abed9d0",
         "name": "set value",
         "rules": [
             {
@@ -669,7 +660,7 @@
         "to": "",
         "reg": false,
         "x": 700,
-        "y": 100,
+        "y": 300,
         "wires": [
             [
                 "8ba1b10ce727a1f3"
@@ -680,14 +671,14 @@
         "id": "8ba1b10ce727a1f3",
         "type": "link out",
         "z": "1f411be02ab63862",
-        "g": "77c15860555312f9",
+        "g": "e97e1f069abed9d0",
         "name": "set value",
         "mode": "link",
         "links": [
             "c464961f4d24a38b"
         ],
         "x": 840,
-        "y": 100,
+        "y": 300,
         "wires": [],
         "l": true
     },
@@ -695,12 +686,12 @@
         "id": "3431af9fadf254c0",
         "type": "websocket in",
         "z": "1f411be02ab63862",
-        "g": "77c15860555312f9",
+        "g": "e97e1f069abed9d0",
         "name": "",
         "server": "",
         "client": "29dd7a1892ce9251",
         "x": 210,
-        "y": 100,
+        "y": 300,
         "wires": [
             [
                 "da5269e74a9b54dd"
@@ -711,17 +702,17 @@
         "id": "052dca420f30f468",
         "type": "function",
         "z": "1f411be02ab63862",
-        "g": "800b06c9c0e3dff7",
-        "name": "cacheDevice",
-        "func": "const message = RED.util.cloneMessage(msg)\nconst networkId = Number.parseInt(message.topic)\nconst networks = flow.get('zwaveNetworks') || {}\nconst devices = networks[networkId] || {}\n\ndevices[message.payload.nodeId] = message.payload\nnetworks[networkId] = devices\nflow.set('zwaveNetworks', networks)\nreturn msg",
+        "g": "94572c166b5f0613",
+        "name": "cache device",
+        "func": "const message = RED.util.cloneMessage(msg)\nconst networkId = Number.parseInt(message.topic)\nconst networks = flow.get('zwaveNetworks') || {}\nconst devices = networks[networkId] || {}\n\ndevices[message.payload.nodeId] = message.payload\nnetworks[networkId] = devices\nflow.set('zwaveNetworks', networks)\nreturn message",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 910,
-        "y": 240,
+        "x": 530,
+        "y": 500,
         "wires": [
             [
                 "fe82b1b65fd7042a"
@@ -729,25 +720,10 @@
         ]
     },
     {
-        "id": "7727b1ae3a741131",
-        "type": "link out",
-        "z": "1f411be02ab63862",
-        "g": "800b06c9c0e3dff7",
-        "name": "value updated",
-        "mode": "link",
-        "links": [
-            "f8a3dae5a7167584"
-        ],
-        "x": 680,
-        "y": 360,
-        "wires": [],
-        "l": true
-    },
-    {
         "id": "13366aaaed6d6a0e",
         "type": "switch",
         "z": "1f411be02ab63862",
-        "g": "af5868441cac20d3",
+        "g": "894703fb3772f644",
         "name": "currentValue",
         "property": "payload.object.property",
         "propertyType": "msg",
@@ -761,8 +737,8 @@
         "checkall": "true",
         "repair": false,
         "outputs": 1,
-        "x": 630,
-        "y": 560,
+        "x": 330,
+        "y": 800,
         "wires": [
             [
                 "cbce903350b96584"
@@ -770,29 +746,11 @@
         ]
     },
     {
-        "id": "f8a3dae5a7167584",
-        "type": "link in",
-        "z": "1f411be02ab63862",
-        "g": "af5868441cac20d3",
-        "name": "value updated",
-        "links": [
-            "7727b1ae3a741131"
-        ],
-        "x": 470,
-        "y": 560,
-        "wires": [
-            [
-                "13366aaaed6d6a0e"
-            ]
-        ],
-        "l": true
-    },
-    {
         "id": "cbce903350b96584",
         "type": "function",
         "z": "1f411be02ab63862",
-        "g": "af5868441cac20d3",
-        "name": "value updated",
+        "g": "894703fb3772f644",
+        "name": "currentValue updated",
         "func": "const networks = flow.get('zwaveNetworks') || {}\nconst devices = networks[msg.payload.networkId] || {}\nconst device = devices[msg.payload.node] || {}\nconst endpoints = device.endpoints || {}\nconst values = endpoints.values || {}\n\nvalues[msg.payload.object.commandClass] = msg.payload.object.newValue\nendpoints[msg.payload.object.endpoint] = values\ndevice.endpoints = endpoints\ndevices[msg.payload.node] = device\nnetworks[msg.payload.networkId] = devices\nflow.set('zwaveNetworks', networks)\nreturn {\n    topic: 'zwave/networks',\n    payload: networks,\n    retain: true\n}",
         "outputs": 1,
         "timeout": 0,
@@ -800,8 +758,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 800,
-        "y": 560,
+        "x": 520,
+        "y": 800,
         "wires": [
             [
                 "6c7e25e13cc8dc0b"
@@ -812,7 +770,7 @@
         "id": "6c7e25e13cc8dc0b",
         "type": "rbe",
         "z": "1f411be02ab63862",
-        "g": "af5868441cac20d3",
+        "g": "894703fb3772f644",
         "name": "",
         "func": "rbe",
         "gap": "",
@@ -821,8 +779,8 @@
         "septopics": true,
         "property": "payload",
         "topi": "topic",
-        "x": 950,
-        "y": 560,
+        "x": 690,
+        "y": 800,
         "wires": [
             [
                 "9ee9d0011c3da8fe"
@@ -833,52 +791,19 @@
         "id": "9ee9d0011c3da8fe",
         "type": "websocket out",
         "z": "1f411be02ab63862",
-        "g": "af5868441cac20d3",
+        "g": "894703fb3772f644",
         "name": "",
         "server": "",
         "client": "29dd7a1892ce9251",
-        "x": 1170,
-        "y": 560,
+        "x": 910,
+        "y": 800,
         "wires": []
-    },
-    {
-        "id": "da91aeb1badc2cc6",
-        "type": "link out",
-        "z": "1f411be02ab63862",
-        "g": "800b06c9c0e3dff7",
-        "name": "get value response",
-        "mode": "link",
-        "links": [
-            "be0fb486ed97a353"
-        ],
-        "x": 690,
-        "y": 320,
-        "wires": [],
-        "l": true
-    },
-    {
-        "id": "be0fb486ed97a353",
-        "type": "link in",
-        "z": "1f411be02ab63862",
-        "g": "f2230ea95240b9c0",
-        "name": "get value response",
-        "links": [
-            "da91aeb1badc2cc6"
-        ],
-        "x": 590,
-        "y": 460,
-        "wires": [
-            [
-                "06f3bbbc1d516cf1"
-            ]
-        ],
-        "l": true
     },
     {
         "id": "06f3bbbc1d516cf1",
         "type": "function",
         "z": "1f411be02ab63862",
-        "g": "f2230ea95240b9c0",
+        "g": "136bdd2bcb510ec7",
         "name": "get value response",
         "func": "const value = msg.payload.object.currentValue\n\nif (value !== undefined) {\n\n    const networks = flow.get('zwaveNetworks') || {}\n    const devices = networks[msg.payload.networkId] || {}\n    const device = devices[msg.payload.node] || {}\n    const endpoints = device.endpoints || {}\n    const values = endpoints.values || {}\n    const message = RED.util.cloneMessage(msg)\n\n    values[msg.payload.object.commandClass] = value\n    endpoints[msg.payload.object.endpoint] = values\n    device.endpoints = endpoints\n    devices[msg.payload.node] = device\n    networks[msg.payload.networkId] = devices\n    flow.set(\"zwaveNetworks\", networks)\n    message.topic = 'zwave/networks'\n    message.payload = networks\n    message.retain = true\n    return message\n\n}\n",
         "outputs": 1,
@@ -887,8 +812,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 790,
-        "y": 460,
+        "x": 390,
+        "y": 700,
         "wires": [
             [
                 "6fcf2b7a2b9cbf10"
@@ -899,7 +824,7 @@
         "id": "6fcf2b7a2b9cbf10",
         "type": "rbe",
         "z": "1f411be02ab63862",
-        "g": "f2230ea95240b9c0",
+        "g": "136bdd2bcb510ec7",
         "name": "",
         "func": "rbe",
         "gap": "",
@@ -908,8 +833,8 @@
         "septopics": true,
         "property": "payload",
         "topi": "topic",
-        "x": 950,
-        "y": 460,
+        "x": 550,
+        "y": 700,
         "wires": [
             [
                 "f5304bc4374c63ec"
@@ -920,372 +845,30 @@
         "id": "f5304bc4374c63ec",
         "type": "websocket out",
         "z": "1f411be02ab63862",
-        "g": "f2230ea95240b9c0",
+        "g": "136bdd2bcb510ec7",
         "name": "",
         "server": "",
         "client": "29dd7a1892ce9251",
-        "x": 1170,
-        "y": 460,
-        "wires": []
-    },
-    {
-        "id": "8a3d176644e579db",
-        "type": "comment",
-        "z": "1f411be02ab63862",
-        "g": "77c15860555312f9",
-        "name": "forward commands from clients to z-wave controller",
-        "info": "* Listens for messages whose `msg.topic` matches\n  `^zet/zwave/\\d+/\\d+/\\d+/\\d+$`\n\n* Formats z-wave `setValue` commands whose value id is constructed from\n  the fields of the topic and whose `targetValue` attribute is\n  `msg.payload`\n\n(Currently, only setValue commands using the targetValue property are\nsupported.)",
-        "x": 250,
-        "y": 60,
-        "wires": []
-    },
-    {
-        "id": "b033eb67405d512f",
-        "type": "comment",
-        "z": "1f411be02ab63862",
-        "g": "800b06c9c0e3dff7",
-        "name": "exchange messages with z-wave controller",
-        "info": "In addition to handling commands sent by clients, implements\ninitialization logic triggered by the controller emitting\n`ALL_NODES_READY`:\n\n```mermaid\n---\ntitle: Initialize Z-Wave Network Model On Receipt of ALL_NODES_READY\n---\nsequenceDiagram\n\n    participant controller as Z-Wave Controller\n    participant flow as Flow\n    participant client as Client(s)\n\n    controller ->> flow: ALL_NODES_READY\n    flow ->> controller: getNodes\n    controller ->>+ flow: NODE_LIST\n\n    loop for each z-wave node id\n\n        flow ->> flow: add device to cached network model\n        flow ->>- controller: getValueIds\n        controller ->> flow: VALUE_ID_LIST\n\n        loop for each value id\n\n          opt property == currentValue\n              flow ->> controller: getValue\n              controller ->>+ flow: GET_VALUE_RESPONSE\n              flow ->> flow: update cached network model for device\n              flow ->>- client: send cached model\n          end\n        end\n    end\n```\n",
-        "x": 220,
-        "y": 200,
-        "wires": []
-    },
-    {
-        "id": "8851c91d5f4ac235",
-        "type": "comment",
-        "z": "1f411be02ab63862",
-        "g": "800b06c9c0e3dff7",
-        "name": "only currentValue properties are supported by the data model",
-        "info": "",
-        "x": 1100,
-        "y": 320,
-        "wires": []
-    },
-    {
-        "id": "d1cc926a0732e498",
-        "type": "status",
-        "z": "1f411be02ab63862",
-        "g": "800b06c9c0e3dff7",
-        "name": "z-wave controller status",
-        "scope": [
-            "8f73c98ea2fb6019"
-        ],
-        "x": 160,
-        "y": 360,
-        "wires": [
-            [
-                "99a84367f7bf4ffa"
-            ]
-        ]
-    },
-    {
-        "id": "99a84367f7bf4ffa",
-        "type": "link out",
-        "z": "1f411be02ab63862",
-        "g": "800b06c9c0e3dff7",
-        "name": "z-wave controller status",
-        "mode": "link",
-        "links": [
-            "9276f1baa86c1f67"
-        ],
-        "x": 390,
-        "y": 360,
-        "wires": [],
-        "l": true
-    },
-    {
-        "id": "5fcf03941d248d26",
-        "type": "change",
-        "z": "1f411be02ab63862",
-        "g": "e6bef42fa28d88a9",
-        "name": "z-wave controller status",
-        "rules": [
-            {
-                "t": "set",
-                "p": "payload",
-                "pt": "msg",
-                "to": "status",
-                "tot": "msg"
-            },
-            {
-                "t": "set",
-                "p": "topic",
-                "pt": "msg",
-                "to": "zwave/controller/status",
-                "tot": "str"
-            },
-            {
-                "t": "set",
-                "p": "retain",
-                "pt": "msg",
-                "to": "true",
-                "tot": "bool"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 730,
-        "y": 660,
-        "wires": [
-            [
-                "ba4c6018b004ebe4"
-            ]
-        ]
-    },
-    {
-        "id": "ba4c6018b004ebe4",
-        "type": "delay",
-        "z": "1f411be02ab63862",
-        "g": "e6bef42fa28d88a9",
-        "name": "",
-        "pauseType": "rate",
-        "timeout": "5",
-        "timeoutUnits": "seconds",
-        "rate": "1",
-        "nbRateUnits": "1",
-        "rateUnits": "second",
-        "randomFirst": "1",
-        "randomLast": "5",
-        "randomUnits": "seconds",
-        "drop": false,
-        "allowrate": false,
-        "outputs": 1,
-        "x": 950,
-        "y": 700,
-        "wires": [
-            [
-                "86b259c55abdad3c"
-            ]
-        ]
-    },
-    {
-        "id": "86b259c55abdad3c",
-        "type": "websocket out",
-        "z": "1f411be02ab63862",
-        "g": "e6bef42fa28d88a9",
-        "name": "",
-        "server": "",
-        "client": "29dd7a1892ce9251",
-        "x": 1190,
+        "x": 770,
         "y": 700,
         "wires": []
-    },
-    {
-        "id": "010d5dd2a0ed1243",
-        "type": "inject",
-        "z": "1f411be02ab63862",
-        "g": "e6bef42fa28d88a9",
-        "name": "disconnected",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": true,
-        "onceDelay": 0.1,
-        "topic": "initialize",
-        "payload": "{\"fill\":\"red\",\"text\":\"disconnected\",\"shape\":\"ring\"}",
-        "payloadType": "json",
-        "x": 420,
-        "y": 720,
-        "wires": [
-            [
-                "78f6ec76be5e10e9"
-            ]
-        ]
-    },
-    {
-        "id": "aa999e9350e9a507",
-        "type": "status",
-        "z": "1f411be02ab63862",
-        "g": "e6bef42fa28d88a9",
-        "name": "websocket connected",
-        "scope": [
-            "86b259c55abdad3c"
-        ],
-        "x": 160,
-        "y": 760,
-        "wires": [
-            [
-                "70c033dfbc378ee6"
-            ]
-        ]
-    },
-    {
-        "id": "70c033dfbc378ee6",
-        "type": "switch",
-        "z": "1f411be02ab63862",
-        "g": "e6bef42fa28d88a9",
-        "name": "",
-        "property": "status.event",
-        "propertyType": "msg",
-        "rules": [
-            {
-                "t": "eq",
-                "v": "connect",
-                "vt": "str"
-            }
-        ],
-        "checkall": "true",
-        "repair": false,
-        "outputs": 1,
-        "x": 330,
-        "y": 760,
-        "wires": [
-            [
-                "bb1e653386e2ab9d"
-            ]
-        ]
-    },
-    {
-        "id": "bb1e653386e2ab9d",
-        "type": "change",
-        "z": "1f411be02ab63862",
-        "g": "e6bef42fa28d88a9",
-        "name": "status",
-        "rules": [
-            {
-                "t": "move",
-                "p": "status",
-                "pt": "msg",
-                "to": "payload",
-                "tot": "msg"
-            },
-            {
-                "t": "set",
-                "p": "topic",
-                "pt": "msg",
-                "to": "status",
-                "tot": "str"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 450,
-        "y": 760,
-        "wires": [
-            [
-                "78f6ec76be5e10e9"
-            ]
-        ]
-    },
-    {
-        "id": "78f6ec76be5e10e9",
-        "type": "join",
-        "z": "1f411be02ab63862",
-        "g": "e6bef42fa28d88a9",
-        "name": "",
-        "mode": "custom",
-        "build": "object",
-        "property": "payload",
-        "propertyType": "msg",
-        "key": "topic",
-        "joiner": "\\n",
-        "joinerType": "str",
-        "accumulate": true,
-        "timeout": "",
-        "count": "2",
-        "reduceRight": false,
-        "reduceExp": "",
-        "reduceInit": "",
-        "reduceInitType": "",
-        "reduceFixup": "",
-        "x": 570,
-        "y": 740,
-        "wires": [
-            [
-                "01d2633aa2dfb782"
-            ]
-        ]
-    },
-    {
-        "id": "01d2633aa2dfb782",
-        "type": "change",
-        "z": "1f411be02ab63862",
-        "g": "e6bef42fa28d88a9",
-        "name": "zwave/controller/status",
-        "rules": [
-            {
-                "t": "set",
-                "p": "payload",
-                "pt": "msg",
-                "to": "payload.initialize",
-                "tot": "msg"
-            },
-            {
-                "t": "set",
-                "p": "topic",
-                "pt": "msg",
-                "to": "zwave/controller/status",
-                "tot": "str"
-            },
-            {
-                "t": "set",
-                "p": "retain",
-                "pt": "msg",
-                "to": "true",
-                "tot": "bool"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 740,
-        "y": 740,
-        "wires": [
-            [
-                "ba4c6018b004ebe4"
-            ]
-        ]
-    },
-    {
-        "id": "9276f1baa86c1f67",
-        "type": "link in",
-        "z": "1f411be02ab63862",
-        "g": "e6bef42fa28d88a9",
-        "name": "z-wave controller status",
-        "links": [
-            "99a84367f7bf4ffa"
-        ],
-        "x": 500,
-        "y": 660,
-        "wires": [
-            [
-                "5fcf03941d248d26"
-            ]
-        ],
-        "l": true
     },
     {
         "id": "850bcdb0dc51cae8",
         "type": "websocket out",
-        "z": "41fbbe36871302f9",
+        "z": "1f411be02ab63862",
         "g": "9f5cd0f49019ccbd",
         "name": "",
         "server": "d4736a641abe6778",
         "client": "",
-        "x": 690,
-        "y": 140,
+        "x": 710,
+        "y": 160,
         "wires": []
     },
     {
         "id": "0a466ae6484ea08d",
         "type": "function",
-        "z": "41fbbe36871302f9",
+        "z": "1f411be02ab63862",
         "g": "9f5cd0f49019ccbd",
         "name": "retain",
         "func": "const retained = flow.get('retained') || {}\n\ntry {\n\n    if (msg.retain === true) {\n\n        if (msg.topic === undefined) {\n\n            node.error(\"topic required when retain is true\", msg);\n            return msg\n\n        }\n\n        if ((msg.payload !== undefined) && (msg.payload !== '')) {\n\n            retained[msg.topic] = RED.util.cloneMessage(msg)\n\n        } else {\n\n            delete retained[msg.topic]\n\n        }\n\n        flow.set('retained', retained)\n        const message = RED.util.cloneMessage(msg)\n        delete message._session\n        message.retain = false\n        return message\n\n    }\n\n    return msg\n\n} finally {\n\n    node.status({\n        fill: 'blue',\n        shape: 'dot',\n        text: Object.keys(retained).length\n    })\n\n}",
@@ -1295,8 +878,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 510,
-        "y": 100,
+        "x": 530,
+        "y": 120,
         "wires": [
             [
                 "850bcdb0dc51cae8"
@@ -1306,14 +889,14 @@
     {
         "id": "ad2823c8d3790d72",
         "type": "status",
-        "z": "41fbbe36871302f9",
+        "z": "1f411be02ab63862",
         "g": "9f5cd0f49019ccbd",
         "name": "client connection",
         "scope": [
             "e3245994f6289398"
         ],
-        "x": 220,
-        "y": 180,
+        "x": 240,
+        "y": 200,
         "wires": [
             [
                 "5553c22baaeb1b99"
@@ -1323,7 +906,7 @@
     {
         "id": "5553c22baaeb1b99",
         "type": "switch",
-        "z": "41fbbe36871302f9",
+        "z": "1f411be02ab63862",
         "g": "9f5cd0f49019ccbd",
         "name": "",
         "property": "status.event",
@@ -1338,8 +921,8 @@
         "checkall": "true",
         "repair": false,
         "outputs": 1,
-        "x": 370,
-        "y": 180,
+        "x": 390,
+        "y": 200,
         "wires": [
             [
                 "9a458b33c80238e5"
@@ -1349,7 +932,7 @@
     {
         "id": "9a458b33c80238e5",
         "type": "function",
-        "z": "41fbbe36871302f9",
+        "z": "1f411be02ab63862",
         "g": "9f5cd0f49019ccbd",
         "name": "retained",
         "func": "const retained = flow.get('retained') || {}\nconst messages = Object.values(retained)\n\ntry {\n\n    return [messages]\n\n} finally {\n\n    node.status({\n        fill: 'blue',\n        shape: 'dot',\n        text: messages.length\n    })\n\n}",
@@ -1359,8 +942,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 500,
-        "y": 180,
+        "x": 520,
+        "y": 200,
         "wires": [
             [
                 "850bcdb0dc51cae8"
@@ -1370,13 +953,13 @@
     {
         "id": "e3245994f6289398",
         "type": "websocket in",
-        "z": "41fbbe36871302f9",
+        "z": "1f411be02ab63862",
         "g": "9f5cd0f49019ccbd",
         "name": "",
         "server": "d4736a641abe6778",
         "client": "",
-        "x": 130,
-        "y": 100,
+        "x": 150,
+        "y": 120,
         "wires": [
             [
                 "3eec2edbf0f4a824"
@@ -1386,7 +969,7 @@
     {
         "id": "3eec2edbf0f4a824",
         "type": "change",
-        "z": "41fbbe36871302f9",
+        "z": "1f411be02ab63862",
         "g": "9f5cd0f49019ccbd",
         "name": "",
         "rules": [
@@ -1401,8 +984,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 340,
-        "y": 100,
+        "x": 360,
+        "y": 120,
         "wires": [
             [
                 "0a466ae6484ea08d"
@@ -1410,14 +993,188 @@
         ]
     },
     {
-        "id": "a00fbe739d40ce56",
+        "id": "c629c0f061d79636",
+        "type": "link out",
+        "z": "1f411be02ab63862",
+        "g": "800b06c9c0e3dff7",
+        "name": "ALL_NODES_READY",
+        "mode": "link",
+        "links": [
+            "5258b20647259df8"
+        ],
+        "x": 660,
+        "y": 900,
+        "wires": [],
+        "l": true
+    },
+    {
+        "id": "5258b20647259df8",
+        "type": "link in",
+        "z": "1f411be02ab63862",
+        "g": "40214102557f4c72",
+        "name": "ALL_NODES_READY",
+        "links": [
+            "c629c0f061d79636"
+        ],
+        "x": 160,
+        "y": 400,
+        "wires": [
+            [
+                "774a45fd82b39e49"
+            ]
+        ],
+        "l": true
+    },
+    {
+        "id": "3b28f3ed3d02b87a",
+        "type": "link out",
+        "z": "1f411be02ab63862",
+        "g": "800b06c9c0e3dff7",
+        "name": "NODE_LIST",
+        "mode": "link",
+        "links": [
+            "860f1bc78e06336e"
+        ],
+        "x": 630,
+        "y": 940,
+        "wires": [],
+        "l": true
+    },
+    {
+        "id": "860f1bc78e06336e",
+        "type": "link in",
+        "z": "1f411be02ab63862",
+        "g": "94572c166b5f0613",
+        "name": "NODE_LIST",
+        "links": [
+            "3b28f3ed3d02b87a"
+        ],
+        "x": 130,
+        "y": 500,
+        "wires": [
+            [
+                "f25df70eb9464d09"
+            ]
+        ],
+        "l": true
+    },
+    {
+        "id": "b88315dabf11d321",
+        "type": "link out",
+        "z": "1f411be02ab63862",
+        "g": "800b06c9c0e3dff7",
+        "name": "VALUE_ID_LIST",
+        "mode": "link",
+        "links": [
+            "d9b4e9ecf74b13d6"
+        ],
+        "x": 650,
+        "y": 980,
+        "wires": [],
+        "l": true
+    },
+    {
+        "id": "d9b4e9ecf74b13d6",
+        "type": "link in",
+        "z": "1f411be02ab63862",
+        "g": "03ed41ef819b3f99",
+        "name": "VALUE_ID_LIST",
+        "links": [
+            "b88315dabf11d321"
+        ],
+        "x": 140,
+        "y": 600,
+        "wires": [
+            [
+                "1a0cab3de23ecf0c"
+            ]
+        ],
+        "l": true
+    },
+    {
+        "id": "8c7c5fd3f15db0ef",
+        "type": "link out",
+        "z": "1f411be02ab63862",
+        "g": "800b06c9c0e3dff7",
+        "name": "GET_VALUE_RESPONSE",
+        "mode": "link",
+        "links": [
+            "d19197aaef49587d"
+        ],
+        "x": 680,
+        "y": 1020,
+        "wires": [],
+        "l": true
+    },
+    {
+        "id": "d19197aaef49587d",
+        "type": "link in",
+        "z": "1f411be02ab63862",
+        "g": "136bdd2bcb510ec7",
+        "name": "GET_VALUE_RESPONSE",
+        "links": [
+            "8c7c5fd3f15db0ef"
+        ],
+        "x": 170,
+        "y": 700,
+        "wires": [
+            [
+                "06f3bbbc1d516cf1"
+            ]
+        ],
+        "l": true
+    },
+    {
+        "id": "cf249a30ab12da8c",
+        "type": "link out",
+        "z": "1f411be02ab63862",
+        "g": "800b06c9c0e3dff7",
+        "name": "VALUE_UPDATED",
+        "mode": "link",
+        "links": [
+            "03ee2356a0e55d3c"
+        ],
+        "x": 650,
+        "y": 1060,
+        "wires": [],
+        "l": true
+    },
+    {
+        "id": "03ee2356a0e55d3c",
+        "type": "link in",
+        "z": "1f411be02ab63862",
+        "g": "894703fb3772f644",
+        "name": "VALUE_UPDATED",
+        "links": [
+            "cf249a30ab12da8c"
+        ],
+        "x": 150,
+        "y": 800,
+        "wires": [
+            [
+                "13366aaaed6d6a0e"
+            ]
+        ],
+        "l": true
+    },
+    {
+        "id": "1f85fc1d3e701689",
         "type": "comment",
-        "z": "41fbbe36871302f9",
-        "g": "9f5cd0f49019ccbd",
-        "name": "assumes a file-system backed context store exists named 'file'",
-        "info": "for _~/.node-red/settings.js_:\n\n```javascript\ncontextStorage: {\n\n    default: { module: 'memory' },\n    file: { module: 'localfilesystem' }\n\n},\n```",
-        "x": 260,
-        "y": 60,
+        "z": "1f411be02ab63862",
+        "name": "only value id's with currentValue properties are supported by the data model at this time",
+        "info": "",
+        "x": 520,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "d2e71a90fbbe2049",
+        "type": "comment",
+        "z": "1f411be02ab63862",
+        "name": "see README.md",
+        "info": "* Assumes that _node-red-contrib-zwave-js_ has been installed\n* Assumes a file-system backed context store exists named `file`\n* Assumes that the dashboard has been built\n* Assumes that the value for `httpStatic` in _settings.js_ has been\n  updated correctly",
+        "x": 120,
+        "y": 40,
         "wires": []
     }
 ]

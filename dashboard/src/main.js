@@ -18,15 +18,6 @@ const app = createApp(App)
 registerPlugins(app)
 
 //////////////////////////////////////////////////////////////////////////////
-// monitor websocket readyState
-//////////////////////////////////////////////////////////////////////////////
-
-// model to display websocket connection
-// status in BackEndComponent.vue
-const websocketStatus = ref(-1)
-app.provide('websocketStatus', websocketStatus)
-
-//////////////////////////////////////////////////////////////////////////////
 // provide the function for ui components to send messages to the back end
 // using a websocket
 //////////////////////////////////////////////////////////////////////////////
@@ -56,9 +47,6 @@ app.provide('websocketPublish', websocketPublish)
 
 const zwaveNetworks = ref({})
 app.provide('zwaveNetworks', zwaveNetworks)
-
-const zwaveControllerStatus = ref('')
-app.provide('zwaveControllerStatus', zwaveControllerStatus)
 
 ///////////////////////////////////////////////////////////////////////////////
 // connect to the back end using a websocket
@@ -116,28 +104,8 @@ function connectWS() {
 
     ws = new WebSocket(url)
 
-    //display the initial status
-    websocketStatus.value = ws.readyState
-
     // start the reconnect timer
     wsReconnectTimer = setInterval(connectWS, 5000)
-
-    // start the websocket status timer
-    ws.onopen = () => {
-
-        websocketStatus.value = ws.readyState
-        wsReadyStateTimer = setInterval(() => { websocketStatus.value = ws.readyState }, 1000)
-
-    }
-
-    // cancel the websocket status timer
-    ws.onclose = () => {
-
-        clearInterval(wsReadyStateTimer)
-        wsReadyStateTimer = null
-        websocketStatus.value = ws.readyState
-
-    }
 
     // log errors
     ws.onerror = (event) => {
