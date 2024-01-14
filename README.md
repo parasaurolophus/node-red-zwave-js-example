@@ -1,76 +1,114 @@
-&copy; Copyright Kirk Rader 2023
+&copy; Copyright Kirk Rader 2024
 
 # Z-Wave in Node-RED Using _node-red-contrib-zwave-js_
 
 > _All links on this page were working as of December 15, 2023._
 
-![flow](zwave-back-end-flow.png)
-
 ## About
 
-Demonstrate using
+> This documentation assumes familiarity with both Z-Wave and Node-RED
+> terminology, concepts and procedures such as Z-Wave _value id_'s including
+> _command class_ (often abbreviated CC), _node id_, _endpoint id_ and _network
+> id_. The installation and configuration intructions assume you have a working
+> Node-RED instance, a USB-based Z-Wave controller and at least one Z-Wave
+> device that supports CC 37 (Z-Wave's _binary switch_ protocol). There is an
+> unfortunate overlap in Node-RED's and Z-Wave's terminology using the word
+> "node" to mean different things. A Node-RED _node_ is software component, a
+> Z-Wave _node_ is a physical device. A Z-Wave _node id_ is an integer
+> representing a particular device in a particular Z-Wave network, not to be
+> confused with the _node id_ of a particular instance of a given type of
+> Node-RED _node_ in a given flow.
+
+This repository's contents demonstrate using
 [node-red-contrib-zwave-js](<https://flows.nodered.org/node/node-red-contrib-zwave-js>)
-to control a Z-Wave-enabled switch using a USB-based Z-Wave controller.
+to control a Z-Wave-enabled binary switch using a USB-based Z-Wave controller.
 
-* Connect to Z-Wave enabled hardware using a _ZWave Controller_ node
+* Connect to Z-Wave enabled hardware using a _ZWave Controller_ node in Node-RED
 
-* Event-driven programming techniques using a WebSocket to communicate
-  asynchronously between the front and back ends
+  ```mermaid
+  graph LR
+
+    switch[Binary Switch]
+
+    subgraph Client
+
+        browser[Web Browser]
+
+    end
+
+    subgraph Raspberry Pi
+
+        dongle[USB Z-Wave Controller]
+
+        subgraph Node-RED
+
+          subgraph Flow Tabs
+            broker[Message Broker]
+            frontend[Front End]
+            backend[Back End]
+          end
+
+            subgraph node-red-contrib-zwave-js
+                controller[ZWave Controller]
+            end
+
+            dashboard[Dashboard]
+
+        end
+    end
+
+  browser <-- WebSocket --> broker
+  broker <--> frontend
+  frontend <--> backend
+  backend <--> controller
+  controller <-- Serial --> dongle
+  dongle <-- z-wave --> switch
+  browser <-- HTTP + JavaScript --> dashboard
+  ```
+
+* Data-driven back-end that operates by "discovering" the set of supported
+  devices in the Z-Wave network
+
+  ![back end flow](back-end-flow-screenshot.png)
 
 * Data-driven front end using a component framework,
   [Vuetify](https://vuetifyjs.com)
 
+  ![front end flow](front-end-flow-screenshot.png)
+
+  <http://localhost:1880/zwave>
+
+  ![dashboard](dashboard-screenshot.png)
+
+* Event-driven programming techniques using a WebSocket to communicate
+  asynchronously between the front and back ends
+
+  ![message broker](message-broker-flow-screenshot.png)
+
 A key feature of this flow is that one can add or remove devices in the Z-Wave
 network without having to modify the front or back end implementation, so long
 as the devices communicate using supported Z-Wave command classes (currently
-only CC 37 for this tutorial).
+only Command Class (CC) 37 for this tutorial).
 
-This flow deliberately departs from many of the recommendations in the
-documentation for _node-red-contrib-zwave-js_. It uses neither
-_CMD&nbsp;Factory_ nor _Event&nbsp;Filter_ nodes. In fact, the only type of node
-from _node-red-cotrib-zwave-js_ used is _ZWave Controller_. The decision only to
-use the _ZWave&nbsp;Controller_ type was made consciously so as to facilitate
-creating and managing a Vuetify-based dashboard in a data-driven fashion. There
-are no hard-coded Z-Wave node id's in the front or back end. Specific Z-Wave
-property types and command classes are referenced only so as to determine
-whether and how to represent a given Z-Wave device in the data model and render
-it in the front end. "Going with the flow" (pun intended) of how
-_node-red-contrib-zwave-js_ is designed would have resulted in a flow that was
-easier to create than this one, but which would have been very fragile by
-comparison when devices are added or removed from the Z-Wave network. The
-approach demonstrated here automatically adapts to devices being added or
-removed using the Z-Wave controller user interface, without requiring
-modification to the front and back end data model and logic for each Z-Wave
-binary switch device added or removed. In other words, the design of this flow
-trades a less intuitive up-front design in exchange for greater flexibility and
-maintainability over time.
-
-Specifically, the implementation of this tutorial flow and associated front-end
-logic support devices that provide Z-Wave's binary switch (command class
-37) protocol using _currentValue_ and _targetValue_ properties in the messages
-they exchange with _Node-RED_ using the _ZWave Controller_ type. This is done by
+The implementation of this tutorial flow and associated front-end logic support
+devices that provide Z-Wave's binary switch (command class
+37) protocol using `currentValue` and `targetValue` properties in the messages
+they exchange with Node-RED using the _ZWave Controller_ type. This is done by
 exploiting the similarity between the features and data models used by Z-Wave CC
-37 devices and Vuetify's _v-switch_ UI components. It would be reasonably
+37 devices and Vuetify's `v-switch` UI components. It would be reasonably
 straightforward to extend this flow's approach to monitor and control additional
-Z-Wave device types using corresponding types of Vuetify components.
+Z-Wave device types using corresponding types of Vuetify components, including
+custom components designed to represent features of devices with more complex
+behaviors.
 
-> Vuetify is used in this flow to demonstrate the relationship between the data
-> model implemented in _Node-RED_ and components of such a framework. The data
-> model for a binary switch is so simple that it could have just as easily be
-> represented using native HTML5 entities such as check boxes rather than
-> _v-switch_ components. The expectation is that gear with more complex
-> behavior, e.g. a thermostat that appears as a composite Z-Wave node with
-> multiple command classes of various underlying data types, would be
-> implemented by application-specific, custom Vuetify components the
-> implementation of which is beyond the scope of this tutorial but a natural
-> extension from it.
+### File and Directory Structure
 
-## File and Directory Structure
+This repository's contents is that of a standard Node-RED _project_ such that it
+can be installed using the Node-RED UI for creating projects from Git
+repositories.
 
-This repository's file structure is that of a standard _Node-RED_ "project" such
-that it can be installed using the _Node-RED_ UI for creating projects from Git
-repositories. In addition, it contains a subdirectory named _dashboard_ that
-contains a Vuetify project. You can use _Node-RED_'s normal UI for loading
+In addition, it contains a subdirectory named _dashboard_ that contains a
+Vuetify based web application. You can use Node-RED's normal UI for loading
 projects from a GitHub repository. The process for also building and hosting the
 Vuetify based front end web application is described [below](#installation).
 
@@ -80,37 +118,34 @@ Vuetify based front end web application is described [below](#installation).
 
 The hardware with which this flow was tested:
 
-| Product                      | URL                                                                    |
-|------------------------------|------------------------------------------------------------------------|
-| Raspberry Pi 4               | <https://www.raspberrypi.com/products/raspberry-pi-4-model-b/>         |
-| Aeotec Z-Stick 7             | <https://aeotec.com/products/aeotec-z-stick-7/>                        |
-| GE/Enbrighten Outdoor Switch | <https://enbrightenme.com/enbrighten-z-wave-plug-outdoor-smart-switch> |
+* [Raspberry Pi 4](https://www.raspberrypi.com/products/raspberry-pi-4-model-b)
+* [Aeotec Z-Stick 7](https://aeotec.com/products/aeotec-z-stick-7/)
+* [GE/Enbrighten Outdoor Switch](https://enbrightenme.com/enbrighten-z-wave-plug-outdoor-smart-switch)
 
 ### Software
 
-> Note that at the time of writing in December 2023 there is some
-> incompatibility among the latest versions of _Raspberry Pi OS_, _Node_, and
-> _Node-RED_ such that once _Node-RED_ opens a serial port the _Node-RED_
-> process must be restarted, e.g. using
-> `sudo&nbsp;systemctl&nbsp;restart&nbsp;nodered.service`, every time changes to
-> the flow are saved or else the node using the serial port will receive a run
-> time error indicating that the port is in use, even though it is the
-> _Node-RED_ process which holds the lock. This bug occurs not only with the
-> _node-red-contrib-zwave-js_ package but also with native _serial in_ and
-> _serial out_ nodes so it is very likely a regression introduced by later
-> versions of _Raspberry Pi OS_ or _Node_ than those which are officially
-> supported by _Node-RED_.
+> At the time of writing (January 2024) there is a known issue with the latest
+> version of Node and the underlying NPM package used to support serial devices
+> in Node-RED. The result is that if you use the exact software versions shown
+> below you will need to restart the Node-RED process each time you deploy
+> changes to any flow that uses serial ports, including
+> _node-red-contrib-zwave-js_'s _ZWave Controller_ node. If you have configured
+> Node-RED to run as a service in Raspberry Pi OS this can be done using the
+> command:
+>
+> ```bash
+> # do this after each deploy until and unless the serial port bug is fixed
+> sudo systemctl restart nodered.service
+> ```
 
 The versions of software with which this flow was tested:
 
-| Product                           | URL                                                        |
-|-----------------------------------|------------------------------------------------------------|
-| Raspberry Pi OS (bookworm)        | <https://www.raspberrypi.com/software/>                    |
-| Node (20.10.0)                    | <https://github.com/nodesource/distributions>              |
-| Node-RED (3.1.3)                  | <https://nodered.org>                                      |
-| node-red-contrib-zwave-js (9.0.3) | <https://flows.nodered.org/node/node-red-contrib-zwave-js> |
-| Vuetify (3.0.0)                   | <https://vuetifyjs.com>                                    |
-| Chromium (120.0.6099.102)         | <https://www.chromium.org/chromium-projects/>              |
+* [Raspberry Pi OS (bookworm)](https://www.raspberrypi.com/software)
+* [Node (20.10.0)](https://github.com/nodesource/distributions)
+* [Node-RED (3.1.3)](https://nodered.org)
+* [node-red-contrib-zwave-js (9.0.3)](https://flows.nodered.org/node/node-red-contrib-zwave-js)
+* [Vuetify (3.0.0)](https://vuetifyjs.com)
+* [Chromium (120.0.6099.102)](https://www.chromium.org/chromium-projects)
 
 ## Installation
 
@@ -133,36 +168,12 @@ The versions of software with which this flow was tested:
    },
    ```
 
-3. Install _node-red-contrib-zwave-js_ either throug the palette manager UI in
-   _Node-RED_ or at the command line
-
-   ```bash
-   cd ~/.node-red
-   npm install node-red-contrib-zwave-js
-   ```
-
-4. Create a new project by cloning this repository using the _Node-RED_ user
-   interface:
-
-   * Ignore any warnings about encrypted credentials; you'll need to supply your
-     own configuration in any event
-
-5. Build the dashboard:
-
-   ```bash
-   cd ~/.node-red/projects/node-red-zwave-js-example/dashboard
-   npm install
-   npm run build
-   ```
-
-6. Add the dashboard path to the `httpStatic` section in _settings.js_:
+3. Add the dashboard path to the `httpStatic` section in _settings.js_:
 
    ```javascript
    httpStatic: [
-    //    {path: '/home/nol/pics/',    root: "/img/"}, 
-    //    {path: '/home/nol/reports/', root: "/doc/"}, 
         {
-          path: '/home/<user>/.node-red/projects/z-wave/dashboard/dist/',
+          path: '/home/<user>/.node-red/projects/node-red-zwave-js-example/dashboard/dist/',
           root: "/zwave/"
         }
    ]
@@ -170,28 +181,38 @@ The versions of software with which this flow was tested:
 
    where `<user>` represents your user name
 
-7. Restart _Node-RED_, e.g. if it is configured to run as a daemon:
+4. Restart the Node-RED process after making changes to
+   _~/.node-red/settings.js_:
 
    ```bash
-   sudo systtemctl restart nodered.service
+   sudo systemctl restart nodered.service
    ```
 
+5. Install _node-red-contrib-zwave-js_ either through the palette manager UI in
+   Node-RED or at the command line
+
+   ```bash
+   cd ~/.node-red
+   npm install node-red-contrib-zwave-js
+   ```
+
+6. Create a new project by cloning this repository using the Node-RED user
+   interface:
+
+   ![projects-menu](projects-menu-screenshot.png)
+
+   Ignore any warnings about encrypted credentials; you'll need to supply your
+   own configuration in any event
+
+7. Build the dashboard:
+
+   ```bash
+   cd ~/.node-red/projects/node-red-zwave-js-example/dashboard
+   npm install
+   npm run build
+   ```
 8. Modify the configuration of the _ZWave Controller_ node to match your Z-Wave
    controller's serial port
-
-> (Note: If you are just starting out with Z-Wave and using this flow to perform
-> the initial configuration of your Z-Wave gear, see the
-> [_node-red-contrib-zwave-js_](https://flows.nodered.org/node/node-red-contrib-zwave-js)
-> documentation for how to use its user interface for configuring the controller
-> node and including device nodes in your Z-Wave network. All that is required
-> is at least one command class 37 (see below) device whose Z-Wave node id must
-> be set in the _ZWave Device_ Node-RED node.)
-
-Once all of the preceding configuration is complete, you should be able to
-browse to the dashboard by appending `/zwave` to your _Node-RED_ editor URL,
-e.g. <http://localhost:1880/zwave>.
-
-![dashboard](dashboard-screenshot.png)
 
 You can verify that everything is running correctly using the toggle switch on
 the dashboard web page. Toggling in the dashboard should turn on and off your
@@ -207,56 +228,20 @@ The features demonstrated by this flow are:
 * The ability to communicate with Z-Wave nodes through a hard-coded reference to
   a particular controller node
 
-* The ability to discover, monitor and control Z-Wave binary switches within
-  _Node-RED_ by way of a HTML5 based user interface using a WebSocket for
-  communication between front and back ends
+* The ability to discover, monitor and control Z-Wave binary switches (nodes
+  that support command class 37) in a Node-RED based back end
+
+* The ability to provide a data-driven HTML5 based user interface using a
+  WebSocket for communication between front and back ends that adapts
+  automatically to the set of devices discovered by the back end
 
 ## Details
 
-```mermaid
----
-title: Overall System Architecture
----
-graph TB
-
-  switch[Binary Switch]
-
-  subgraph Client
-
-      browser[Web Browser]
-
-  end
-
-  subgraph Raspberry Pi
-
-      dongle[USB Z-Wave Controller]
-
-      subgraph Node-RED
-
-          flow[Flow]
-
-          subgraph node-red-contrib-zwave-js
-              controller[ZWave Controller]
-          end
-
-          dashboard[Dashboard]
-
-      end
-  end
-
-browser <-- websocket --> flow
-flow <--> controller
-controller <-- serial --> dongle
-dongle <-- z-wave --> switch
-browser <-- HTTP --> dashboard
-dashboard <-- websocket --> flow
-```
-
-> Note that _Node-RED_ is used as the web server for the dashboard in order to
+> Note that Node-RED is used as the web server for the dashboard in order to
 > make this tutorial project as self-contained as possible. The dashboard web
-> application has no server side code nor any dependency on _Node-RED_ other
-> than as a web socket client. It could run in any web server with network
-> access to the _Node-RED_ server running this project's flow.
+> application has no server side code nor any dependency on Node-RED other than
+> as a web socket client. It could run in any web server with network access to
+> the Node-RED server running this project's flow.
 
 ### WebSocket Based Event Driven Design
 
@@ -276,7 +261,7 @@ When a Z-Wave device changes state, whether as a result of receiving a command
 from this flow or by other operations within the Z-Wave network, it transmits a
 status message over the Z-Wave network which is received by the Z-Wave
 controller. That causes the controller to emit a message from the serial port to
-which the _ZWave Controller_ node is listening in _Node-RED_. In this example,
+which the _ZWave Controller_ node is listening in Node-RED. In this example,
 messages which report the current value of a binary switch (command class 37)
 used to update an in-memory data model of the current state of all Z-Wave
 devices, which is then forwarded to the _websocket out_ node for processing by a
@@ -304,7 +289,7 @@ properly executed.
 
 ```mermaid
 ---
-title: Closed-loop event processing in the dashboard
+title: Event processing in the dashboard
 ---
 sequenceDiagram
 
@@ -319,20 +304,20 @@ sequenceDiagram
 
   rect rgba(255, 255, 0, 0.1)
     dashboard ->>+ flow: "set/zwave/2/37:value" via websocket
-    flow ->>- controllernode: "set value" message
-    controllernode ->> dongle: "set value" message via serial port
-    dongle ->>+ device: "set value" message via Z-Wave RF protocol
+    flow ->>- controllernode: "setValue" message
+    controllernode ->> dongle: "setValue" message via serial port
+    dongle ->>+ device: "setValue" message via Z-Wave RF protocol
   end
 
   rect rgba(0, 255, 255, 0.1)
 
     note over user, device: the sequence from here on is the same no matter what causes the device to change state
-    note over user, device: i.e. the flow operates asynchronously on status messages from Z-Wave nodes without regard to whether or not they occur as direct result of a command previously sent by the flow
+    note over user, device: i.e. the flow operates asynchronously on status messages from Z-Wave nodes without regard to whether or not they occur as a direct result of a command previously sent by the flow
 
     device ->> device: change state
-    device ->>- dongle: status message via Z-Wave RF protocol
-    dongle ->>+ controllernode: status message via serial port
-    controllernode ->>- flow: status message
+    device ->>- dongle: VALUE_UPDATED via Z-Wave RF protocol
+    dongle ->>+ controllernode: VALUE_UPDATED via serial port
+    controllernode ->>- flow: VALUE_UPDATED
     activate flow
     flow ->> flow: update data model
     flow ->> dashboard: send data model via websocket
@@ -387,13 +372,13 @@ sequenceDiagram
 ### Message Broker
 
 The user is not a participant in the immediately preceding flow since it is
-triggered by direct interactions between _Node-RED_ nodes in the back end. This
+triggered by direct interactions between Node-RED nodes in the back end. This
 begs the question of how the data model is delivered to the dashboard when it
 might not even have yet been launched when the data model is first constructed?
 
 The interactions labeled "send data model via websocket" in the preceding
 sequences are actually quite oversimplified to keep the diagrams readable. This
-tutorial flow uses _Node-RED_'s context storage to implement a WebSocket-based
+tutorial flow uses Node-RED's context storage to implement a WebSocket-based
 message broker with semantics inspired by MQTT. Each message sent via the broker
 must include both `topic` and `payload` attributes. The `topic` strings are used
 to classify and route messages while any data associated with a given `topic` is
